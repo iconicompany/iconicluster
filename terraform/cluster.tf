@@ -3,7 +3,7 @@
 
 resource "rustack_port" "cluster_port" {
   count = var.SERVERS_NUM
-  vdc_id = resource.rustack_vdc.iconicvdc.id
+  vdc_id = data.rustack_vdc.iconicvdc.id
   ip_address = "10.0.1.${count.index + 10}"
   network_id = data.rustack_network.iconicnet.id
   firewall_templates = [data.rustack_firewall_template.allow_default.id, data.rustack_firewall_template.allow_web.id, data.rustack_firewall_template.allow_ssh.id, data.rustack_firewall_template.allow_icmp.id, data.rustack_firewall_template.allow_kubeapi.id]
@@ -34,7 +34,7 @@ data "template_file" "cluster-cloud-config" {
 # Указываем, что необходимо получить публичный адрес.
 resource "rustack_vm" "cluster" {
   count = var.SERVERS_NUM
-  vdc_id = resource.rustack_vdc.iconicvdc.id
+  vdc_id = data.rustack_vdc.iconicvdc.id
   name   = resource.terraform_data.hostname[count.index].output
   cpu    = var.CLUSTER_SERVER[count.index].cpu
   ram    = var.CLUSTER_SERVER[count.index].ram
