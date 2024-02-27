@@ -1,0 +1,1 @@
+ldapadd -x -D cn=admin,dc=iconicompany,dc=com -W -f basedn.ldif

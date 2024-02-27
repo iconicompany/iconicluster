@@ -1,0 +1,12 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    additionalArguments:
+      - "--entrypoints.websecure.http.tls.certResolver=http"
+      - "--certificatesresolvers.http.acme.tlschallenge"
+      - "--certificatesresolvers.http.acme.email=certbot@iconicompany.com"
+      - "--certificatesresolvers.http.acme.storage=acme.json"

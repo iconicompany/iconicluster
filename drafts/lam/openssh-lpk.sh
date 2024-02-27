@@ -1,0 +1,1 @@
+sudo ldapadd -H ldapi:/// -Y EXTERNAL -f openssh-lpk.ldif

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lam-config
+  namespace: lam
+data:
+  # configuration database (files or mysql)
+  LAM_CONFIGURATION_DATABASE: mysql
+  # MySQL server if database is mysql
+  LAM_CONFIGURATION_HOST: mysqldb
+  # MySQL port if database is mysql
+  LAM_CONFIGURATION_PORT: "3306"
+  # MySQL user name if database is mysql
+  LAM_CONFIGURATION_USER: lam
+  # MySQL password if database is mysql
+  LAM_CONFIGURATION_PASSWORD: lam
+  # MySQL database name if database is mysql
+  LAM_CONFIGURATION_DATABASE_NAME: lam
+  # LAM configuration master password and password for server profile "lam"
+  LAM_PASSWORD: lam

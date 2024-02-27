@@ -1,0 +1,11 @@
+DB_HOST=postgres01.jupiter.icncd.ru
+DB_NAME=k3s
+DB_USER=k3s
+CLUSTER_HOST=kube01.icncd.ru
+CLUSTER_URL=https://${CLUSTER_HOST}:6443
+ZONE=jupiter
+export NFS_HOST=nfs01.jupiter.icncd.ru
+export NFS_PATH=/srv/kube
+export NFS_ACCESS=10.0.1.0/24
+export ACME_EMAIL=certbot@iconicompany.com
+

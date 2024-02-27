@@ -1,0 +1,7 @@
+dn: ou=users,dc=iconicompany,dc=com
+objectClass: organizationalUnit
+ou: users
+
+dn: ou=groups,dc=iconicompany,dc=com
+objectClass: organizationalUnit
+ou: groups

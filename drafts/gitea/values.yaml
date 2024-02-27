@@ -1,0 +1,24 @@
+# Disable memcached; Gitea will use an internal 'memory' cache.
+memcached:
+  enabled: false
+
+# Disable postgresql; we've already created our own.
+postgresql:
+  enabled: false
+
+# The gitea.config section maps to the app.ini file.
+gitea:
+  admin:
+    existingSecret: gitea-admin-secret
+    email: git@iconicompany.com
+  config:
+    server:
+      DOMAIN: git.iconicompany.com
+      ROOT_URL: https://git.iconicompany.com
+    database:
+      DB_TYPE: postgres
+      HOST: callisto:5432
+      USER: gitea
+      PASSWD: gitea
+      NAME: gitea
+      SCHEMA: gitea
