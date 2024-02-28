@@ -22,7 +22,28 @@ variable "USER_LOGIN" {
   description = "User's login"
   type        = string
 }
-
+variable "CLUSTER_SERVER" {
+  type = list(object({
+    cpu  = number
+    ram  = number
+    disk = number
+    power = bool
+  }))
+  default = [
+    {
+      cpu  = 2
+      ram  = 2
+      disk = 60
+      power = true
+    },
+    {
+      cpu  = 2
+      ram  = 2
+      disk = 60
+      power = true
+    }
+  ]
+}
 variable "CLUSTER_DOMAIN" {
   description = "Cluster domain name"
   type        = string
@@ -113,20 +134,7 @@ variable "CLUSTER_ISSUER_EMAIL" {
   type        = string
 }
 
-variable "CLUSTER_SERVER" {
-  type = list(object({
-    cpu  = number
-    ram  = number
-    disk = number
-  }))
-  default = [
-    {
-      cpu  = 2
-      ram  = 2
-      disk = 60
-    }
-  ]
-}
+
 variable "CLUSTER_GRANT_ROLE" {
   description = "Grant role for user after cluster install"
   type        = string

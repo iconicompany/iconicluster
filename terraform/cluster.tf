@@ -38,7 +38,7 @@ resource "rustack_vm" "cluster" {
   name   = resource.terraform_data.hostname[count.index].output
   cpu    = var.CLUSTER_SERVER[count.index].cpu
   ram    = var.CLUSTER_SERVER[count.index].ram
-  power  = var.CLUSTER_POWER
+  power  = var.CLUSTER_POWER && var.CLUSTER_SERVER[count.index].power
 
   template_id = data.rustack_template.ubuntu22.id
   user_data   = data.template_file.cluster-cloud-config[count.index].rendered
@@ -71,11 +71,11 @@ resource "rustack_dns_record" "node_ws_record" {
 }
 
 resource "rustack_dns_record" "cluster_ws_record" {
-    count = var.SERVERS_NUM>0 ? 1 : 0
+    count = var.SERVERS_NUM
     dns_id = resource.rustack_dns.cicd_ws_dns.id
     type = "A"
     host = "${var.CLUSTER_DOMAIN}."
-    data = resource.rustack_vm.cluster[0].floating_ip
+    data = resource.rustack_vm.cluster[count.index].floating_ip
 }
 
 resource "rustack_dns_record" "any_cluster_ws_record" {
