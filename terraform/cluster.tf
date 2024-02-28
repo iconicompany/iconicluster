@@ -43,6 +43,9 @@ resource "rustack_vm" "cluster" {
   template_id = data.rustack_template.ubuntu22.id
   user_data   = data.template_file.cluster-cloud-config[count.index].rendered
 
+  lifecycle {
+     ignore_changes = [ user_data ]
+  }
   system_disk {
     size               = var.CLUSTER_SERVER[count.index].disk
     storage_profile_id = data.rustack_storage_profile.ssd.id
