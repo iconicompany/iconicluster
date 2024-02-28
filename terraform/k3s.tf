@@ -34,6 +34,11 @@ module "k3s" {
   }
 
 }
+resource "postgresql_role" "k3s" {
+  name     = "my_role"
+  login    = true
+  password = "mypass"
+}
 
 resource "null_resource" "k3s_finalize" {
   depends_on = [module.k3s]

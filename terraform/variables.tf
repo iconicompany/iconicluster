@@ -147,3 +147,20 @@ variable "CLIENT_KEY" {
   description = "Path to PEM-encoded client certificate key for TLS authentication"
   type        = string
 }
+
+variable "K3S_POSTGRESQL_HOST" {
+  description = "postgresql server host for k3s"
+  type        = string
+}
+
+variable "K3S_POSTGRESQL_HOST" {
+  description = "postgresql server port for k3s"
+  type        = number
+  default     = 5432
+}
+
+variable "K3S_POSTGRESQL_USER" {
+  description = "postgresql server user for k3s"
+  type        = string
+  default     = "k3s"
+}

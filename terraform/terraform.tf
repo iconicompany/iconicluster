@@ -54,3 +54,15 @@ provider "kubernetes" {
 }
 
 
+provider "postgresql" {
+  host        = var.K3S_POSTGRESQL_HOST
+  port        = var.K3S_POSTGRESQL_PORT
+  database    = "postgres"
+  username    = var.K3S_POSTGRESQL_USER
+  sslmode     = "verify-full"
+  sslrootcert = pathexpand(var.CLUSTER_CA_CERTIFICATE)
+  clientcert {
+    cert = pathexpand(var.CLIENT_CERTIFICATE)
+    key  = pathexpand(var.CLIENT_KEY)
+  }
+}
