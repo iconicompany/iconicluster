@@ -7,6 +7,7 @@ locals {
 
 # generate token for DB client certificate
 data "external" "step_k3s_token" {
+  count   = var.SERVERS_NUM
   program = ["bash", "${path.module}/step-ca-token.sh"]
 
   query = {
@@ -19,12 +20,15 @@ data "external" "step_k3s_token" {
 
 # generate DB client certificate
 resource "null_resource" "step_k3s_cert" {
+  count = var.SERVERS_NUM
   depends_on = [null_resource.step_cli]
-
+  triggers = {
+    vm_id = rustack_vm.cluster[count.index].id
+  }
   connection {
     #host     = resource.terraform_data.hostname[0].output
     # line below not working when SERVERS_NUM=0
-    host = rustack_vm.cluster[0].floating_ip
+    host = rustack_vm.cluster[count.index].floating_ip
     #host      = var.CLUSTER_DOMAIN
     user = var.USER_LOGIN
   }
@@ -33,7 +37,7 @@ resource "null_resource" "step_k3s_cert" {
     on_failure = fail
     inline = [
       "sudo mkdir -p ${var.STEPCERTPATH}",
-      "sudo env STEP_TOKEN=${data.external.step_k3s_token.result.TOKEN} step ca certificate k3s ${var.STEPCERTPATH}/k3s.crt ${var.STEPCERTPATH}/k3s.key -f --provisioner ${var.STEP_PROVISIONER}",
+      "sudo env STEP_TOKEN=${data.external.step_k3s_token[count.index].result.TOKEN} step ca certificate k3s ${var.STEPCERTPATH}/k3s.crt ${var.STEPCERTPATH}/k3s.key -f --provisioner ${var.STEP_PROVISIONER}",
       "sudo systemctl enable --now cert-renewer@k3s.timer"
     ]
   }
@@ -57,7 +61,9 @@ data "external" "step_k3s_ca_token" {
 # generate CA
 resource "null_resource" "step_k3s_ca" {
   depends_on = [null_resource.step_cli]
-
+  triggers = {
+    vm_id = rustack_vm.cluster[0].id
+  }
   for_each = local.certificates_types
   connection {
     #host     = resource.terraform_data.hostname[0].output
