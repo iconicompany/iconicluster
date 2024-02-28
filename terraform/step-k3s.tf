@@ -7,7 +7,7 @@ locals {
 
 # generate token for DB client certificate
 data "external" "step_k3s_token" {
-  program  = ["bash", "${path.module}/step-ca-token.sh"]
+  program = ["bash", "${path.module}/step-ca-token.sh"]
 
   query = {
     STEPPATH           = var.STEPPATH
@@ -19,9 +19,8 @@ data "external" "step_k3s_token" {
 
 # generate DB client certificate
 resource "null_resource" "step_k3s_cert" {
-  depends_on = [null_resource.step_cli_install]
+  depends_on = [null_resource.step_cli]
 
-  for_each = local.certificates_types
   connection {
     #host     = resource.terraform_data.hostname[0].output
     # line below not working when SERVERS_NUM=0
@@ -31,9 +30,10 @@ resource "null_resource" "step_k3s_cert" {
   }
 
   provisioner "remote-exec" {
+    on_failure = fail
     inline = [
       "sudo mkdir -p ${var.STEPCERTPATH}",
-      "sudo env STEP_TOKEN=${data.external.step_k3s_token.result.TOKEN} step ca certificate k3s ${var.STEPCERTPATH}/k3s.crt ${var.STEPCERTPATH}/k3s.key --provisioner ${var.STEP_PROVISIONER}",
+      "sudo env STEP_TOKEN=${data.external.step_k3s_token.result.TOKEN} step ca certificate k3s ${var.STEPCERTPATH}/k3s.crt ${var.STEPCERTPATH}/k3s.key -f --provisioner ${var.STEP_PROVISIONER}",
       "sudo systemctl enable --now cert-renewer@k3s.timer"
     ]
   }
@@ -56,7 +56,7 @@ data "external" "step_k3s_ca_token" {
 
 # generate CA
 resource "null_resource" "step_k3s_ca" {
-  depends_on = [null_resource.step_cli_install]
+  depends_on = [null_resource.step_cli]
 
   for_each = local.certificates_types
   connection {
@@ -68,6 +68,7 @@ resource "null_resource" "step_k3s_ca" {
   }
 
   provisioner "remote-exec" {
+    on_failure = fail
     inline = [
       "sudo mkdir -p ${local.source_ca_path}/$(dirname ${each.value}) ${local.target_ca_path}/$(dirname ${each.value})",
       "sudo env STEP_TOKEN=${data.external.step_k3s_ca_token[each.key].result.TOKEN} step ca certificate ${replace(each.value, "/", "-")} ${local.source_ca_path}/${each.value}.crt ${local.source_ca_path}/${each.value}.key --provisioner ${var.STEP_PROVISIONER_KUBE}",

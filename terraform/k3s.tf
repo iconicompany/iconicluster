@@ -28,7 +28,7 @@ module "k3s" {
         user = var.USER_LOGIN
       }
       flags = [
-        "--datastore-endpoint=\"postgres://${var.K3S_DB_USER}@${var.K3S_DB_HOST}:5432/${var.K3S_DB_NAME}\"",
+        "--datastore-endpoint=\"postgres://${var.K3S_DB_USER}@${var.K3S_DB_HOST}:${var.K3S_DB_PORT}/${postgresql_database.k3s.name}\"",
         "--datastore-cafile=\"${pathexpand(var.CLUSTER_CA_CERTIFICATE)}\"",
         "--datastore-certfile=\"${var.STEPCERTPATH}/k3s.crt\"",
         "--datastore-keyfile=\"${var.STEPCERTPATH}/k3s.key\""
@@ -45,7 +45,7 @@ resource "postgresql_role" "k3s" {
 }
 
 resource "postgresql_database" "k3s" {
-  name              = "k3s"
+  name              = var.K3S_DB_NAME
   owner             = postgresql_role.k3s.name
   lc_collate        = "C"
   connection_limit  = -1
