@@ -60,7 +60,7 @@ provider "postgresql" {
   host        = var.K3S_DB_HOST
   port        = var.K3S_DB_PORT
   database    = "postgres"
-  username    = var.K3S_DB_USER
+  username    = var.USER_LOGIN
   sslmode     = "verify-full"
   sslrootcert = pathexpand(var.CLUSTER_CA_CERTIFICATE)
   clientcert {
