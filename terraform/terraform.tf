@@ -23,7 +23,9 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = ">=2.0.1"
     }
-
+    postgresql = {
+      source = "cyrilgdn/postgresql"
+    }
   }
 }
 
@@ -55,10 +57,10 @@ provider "kubernetes" {
 
 
 provider "postgresql" {
-  host        = var.K3S_POSTGRESQL_HOST
-  port        = var.K3S_POSTGRESQL_PORT
+  host        = var.K3S_DB_HOST
+  port        = var.K3S_DB_PORT
   database    = "postgres"
-  username    = var.K3S_POSTGRESQL_USER
+  username    = var.K3S_DB_USER
   sslmode     = "verify-full"
   sslrootcert = pathexpand(var.CLUSTER_CA_CERTIFICATE)
   clientcert {

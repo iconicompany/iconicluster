@@ -148,19 +148,25 @@ variable "CLIENT_KEY" {
   type        = string
 }
 
-variable "K3S_POSTGRESQL_HOST" {
-  description = "postgresql server host for k3s"
+variable "K3S_DB_HOST" {
+  description = "database server host for k3s"
   type        = string
 }
 
-variable "K3S_POSTGRESQL_HOST" {
-  description = "postgresql server port for k3s"
+variable "K3S_DB_PORT" {
+  description = "database server port for k3s"
   type        = number
   default     = 5432
 }
 
-variable "K3S_POSTGRESQL_USER" {
-  description = "postgresql server user for k3s"
+variable "K3S_DB_NAME" {
+  description = "database name for k3s"
+  type        = string
+  default     = "k3s"
+}
+
+variable "K3S_DB_USER" {
+  description = "database user for k3s"
   type        = string
   default     = "k3s"
 }

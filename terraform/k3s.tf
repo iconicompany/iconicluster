@@ -28,6 +28,11 @@ module "k3s" {
         user = var.USER_LOGIN
       }
       flags = [
+        "--datastore-endpoint=\"postgres://${var.K3S_DB_USER}@${var.K3S_DB_HOST}:5432/${var.K3S_DB_NAME}\"",
+        "--datastore-cafile=\"${pathexpand(var.CLUSTER_CA_CERTIFICATE)}\"",
+        "--datastore-certfile=\"${var.STEPCERTPATH}/k3s.crt\"",
+        "--datastore-keyfile=\"${var.STEPCERTPATH}/k3s.key\""
+
       ]
       annotations = { "server_id" : i } // theses annotations will not be managed by this module
     }
@@ -35,9 +40,16 @@ module "k3s" {
 
 }
 resource "postgresql_role" "k3s" {
-  name     = "my_role"
-  login    = true
-  password = "mypass"
+  name  = "k3s"
+  login = true
+}
+
+resource "postgresql_database" "k3s" {
+  name              = "k3s"
+  owner             = postgresql_role.k3s.name
+  lc_collate        = "C"
+  connection_limit  = -1
+  allow_connections = true
 }
 
 resource "null_resource" "k3s_finalize" {
