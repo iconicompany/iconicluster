@@ -77,3 +77,11 @@ resource "rustack_dns_record" "cluster_ws_record" {
     host = "${var.CLUSTER_DOMAIN}."
     data = resource.rustack_vm.cluster[0].floating_ip
 }
+
+resource "rustack_dns_record" "any_cluster_ws_record" {
+    count = var.SERVERS_NUM>0 ? 1 : 0
+    dns_id = resource.rustack_dns.cicd_ws_dns.id
+    type = "A"
+    host = "*.${var.CLUSTER_DOMAIN}."
+    data = resource.rustack_vm.cluster[0].floating_ip
+}
