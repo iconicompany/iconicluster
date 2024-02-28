@@ -5,6 +5,42 @@ locals {
   target_ca_path     = "/var/lib/rancher/k3s/server/tls"
 }
 
+# generate token for DB client certificate
+data "external" "step_k3s_token" {
+  program  = ["bash", "${path.module}/step-ca-token.sh"]
+
+  query = {
+    STEPPATH           = var.STEPPATH
+    STEP_PROVISIONER   = var.STEP_PROVISIONER
+    STEP_PASSWORD_FILE = var.STEP_PASSWORD_FILE
+    CN                 = "k3s"
+  }
+}
+
+# generate DB client certificate
+resource "null_resource" "step_k3s_cert" {
+  depends_on = [null_resource.step_cli_install]
+
+  for_each = local.certificates_types
+  connection {
+    #host     = resource.terraform_data.hostname[0].output
+    # line below not working when SERVERS_NUM=0
+    host = rustack_vm.cluster[0].floating_ip
+    #host      = var.CLUSTER_DOMAIN
+    user = var.USER_LOGIN
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo mkdir -p ${var.STEPCERTPATH}",
+      "sudo env STEP_TOKEN=${data.external.step_k3s_token.result.TOKEN} step ca certificate k3s ${var.STEPCERTPATH}/k3s.crt ${var.STEPCERTPATH}/k3s.key --provisioner ${var.STEP_PROVISIONER}",
+      "sudo systemctl enable --now cert-renewer@k3s.timer"
+    ]
+  }
+
+}
+
+
 # tokens for CA
 data "external" "step_k3s_ca_token" {
   for_each = local.certificates_types
