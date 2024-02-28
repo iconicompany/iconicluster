@@ -23,8 +23,9 @@ resource "null_resource" "step_k3s_ca" {
   for_each = local.certificates_types
   connection {
         #host     = resource.terraform_data.hostname[0].output
-        #host      = rustack_vm.cluster[0].floating_ip
-        host      = var.CLUSTER_DOMAIN
+        # line below not working when SERVERS_NUM=0
+        host      = rustack_vm.cluster[0].floating_ip
+        #host      = var.CLUSTER_DOMAIN
         user      = var.USER_LOGIN
   }
 
