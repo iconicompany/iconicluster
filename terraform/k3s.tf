@@ -4,7 +4,7 @@ module "k3s" {
   #depends_on_   = resource.rustack_vm.cluster 
   depends_on_    = null_resource.step_k3s_ca
   k3s_version    = "latest"
-  cluster_domain = var.CLUSTER_DOMAIN
+  cluster_domain = "cluster.${var.CLUSTER_DOMAIN}"
   cidr = {
     pods     = "10.42.0.0/16"
     services = "10.43.0.0/16"
