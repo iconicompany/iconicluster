@@ -1,5 +1,5 @@
 module "nginx-controller" {
-  depends_on = [module.k3s]
+  depends_on = [null_resource.k3s_finalize]
   source     = "terraform-iaac/nginx-controller/helm"
 }
 module "cert_manager" {

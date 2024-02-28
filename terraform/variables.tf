@@ -106,7 +106,6 @@ variable "GENERATE_K3S_STEP_CA" {
 variable "CLUSTER_ISSUER_EMAIL" {
   description = "Letsencrypt email"
   type        = string
-
 }
 
 variable "CLUSTER_SERVER" {
@@ -123,6 +122,12 @@ variable "CLUSTER_SERVER" {
     }
   ]
 }
+variable "CLUSTER_GRANT_ROLE" {
+  description = "Grant role for user after cluster install"
+  type        = string
+  default     = "cluster-admin"
+}
+
 variable "CLUSTER_CA_CERTIFICATE" {
   description = "Path to PEM-encoded root certificates bundle for TLS"
   type        = string

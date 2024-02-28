@@ -34,3 +34,20 @@ module "k3s" {
   }
 
 }
+
+resource "null_resource" "k3s_finalize" {
+  depends_on = [module.k3s]
+  connection {
+    # line below not working when SERVERS_NUM=0
+    host = rustack_vm.cluster[0].floating_ip
+    #host      = var.CLUSTER_DOMAIN
+    user = var.USER_LOGIN
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo kubectl create clusterrolebinding ${var.USER_LOGIN}-${var.CLUSTER_GRANT_ROLE}-binding --clusterrole=${var.CLUSTER_GRANT_ROLE} --user=${var.USER_LOGIN}"
+    ]
+  }
+
+}
