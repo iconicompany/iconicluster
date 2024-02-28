@@ -1,9 +1,9 @@
-variable "rustack_endpoint" {
+variable "RUSTACK_ENDPOINT" {
   description = "Rustack API Endpoint"
   type        = string
 }
 
-variable "rustack_token" {
+variable "RUSTACK_TOKEN" {
   description = "Rustack API Token"
   type        = string
 }
@@ -39,7 +39,7 @@ variable "AGENTS_NUM" {
 }
 
 variable "CLUSTER_POWER" {
-  description = "Power switch"
+  description = "Cluster power switch"
   type        = bool
   default     = true
 }
@@ -51,6 +51,11 @@ variable "STEPPATH" {
   default     = "/etc/step-ca"
 }
 
+variable "STEPCERTPATH" {
+  description = "StepCA certs dir"
+  type        = string
+  default     = "/etc/step/certs"
+}
 
 variable "STEP_CA_URL" {
   description = "StepCA STEP_CA_URL"

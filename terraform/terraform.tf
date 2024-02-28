@@ -28,8 +28,8 @@ terraform {
 }
 
 provider "rustack" {
-  api_endpoint = var.rustack_endpoint
-  token        = var.rustack_token
+  api_endpoint = var.RUSTACK_ENDPOINT
+  token        = var.RUSTACK_TOKEN
 }
 provider "kubectl" {
   host                   = "${var.CLUSTER_DOMAIN}:6443"
