@@ -33,17 +33,17 @@ provider "rustack" {
 }
 provider "kubectl" {
   host                   = "${var.CLUSTER_DOMAIN}:6443"
-  cluster_ca_certificate = file("${var.STEPPATH}/certs/root_ca.crt")
-  client_certificate     = file(pathexpand("~/.step/certs/my.crt"))
-  client_key             = file(pathexpand("~/.step/certs/my.key"))
+  cluster_ca_certificate = file(pathexpand(var.CLUSTER_CA_CERTIFICATE))
+  client_certificate     = file(pathexpand(var.CLIENT_CERTIFICATE))
+  client_key             = file(pathexpand(var.CLIENT_KEY))
   load_config_file       = false
 }
 provider "helm" {
   kubernetes {
     host                   = "${var.CLUSTER_DOMAIN}:6443"
-    cluster_ca_certificate = file("${var.STEPPATH}/certs/root_ca.crt")
-    client_certificate     = file(pathexpand("~/.step/certs/my.crt"))
-    client_key             = file(pathexpand("~/.step/certs/my.key"))
+    cluster_ca_certificate = file(pathexpand(var.CLUSTER_CA_CERTIFICATE))
+    client_certificate     = file(pathexpand(var.CLIENT_CERTIFICATE))
+    client_key             = file(pathexpand(var.CLIENT_KEY))
   }
 }
 provider "kubernetes" {
