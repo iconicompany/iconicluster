@@ -1,13 +1,21 @@
 set -e
+export STEPPATH=${STEPPATH:-/etc/step-ca}
+export STEPCERTPATH=${STEPCERTPATH:-/etc/step/certs}
+export STEP_TOKEN=${STEP_TOKEN}
+export STEP_PASSWORD_FILE=${STEP_PASSWORD_FILE}
 
 function error_exit() {
   echo "$1" 1>&2
   exit 1
 }
+if [ "$1" == "" ] ; then
+    echo "ERROR: No cn given"
+    echo "USAGE: $0 <cn>"
+    exit 1
+fi
+CN=${1}
 
-function check_deps() {
-  test -f $(which step) || error_exit "step command not detected in path, please install it"
-}
+test -f $(which step) || error_exit "step command not detected in path, please install it"
 
 sudo apt install  --no-upgrade postgresql postgresql-client
 
@@ -24,7 +32,13 @@ fi
 if ! sudo grep -Fq iconicompany $PG_IDENT; then
     echo $PG_IDENT_CONFIG | sudo tee -a $PG_IDENT
 fi
-#sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /etc/postgresql/14/main/postgresql.conf
-echo "listen_addresses = '*'" | sudo tee  /etc/postgresql/14/main/conf.d/iconicloud.conf
+sudo tee  /etc/postgresql/14/main/conf.d/iconicloud.conf <<EOT
+listen_addresses = '*'
+ssl_ca_file = '${STEPPATH}/certs/root_ca.crt'
+ssl_cert_file = '${STEPCERTPATH}/postgresql.crt'
+ssl_key_file = '${STEPCERTPATH}/postgresql.key'
+EOT
+
+curl -Ls https://github.com/iconicompany/iconicluster/raw/main/step-ca/bin/step-cert-service.sh | bash -s - ${CN} postgresql
 
 sudo systemctl restart postgresql
