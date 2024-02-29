@@ -49,7 +49,7 @@ resource "null_resource" "step_postgresql" {
     on_failure = fail
     inline = [
       "export STEP_TOKEN=${data.external.step_postgresql_token[count.index].result.TOKEN}",
-      "curl -Ls https://github.com/iconicompany/iconicluster/raw/main/postgresql/postgresql-server.sh | bash -s - ${terraform_data.postgresqlname[count.index].output}",
+      "curl -Ls https://github.com/iconicompany/iconicluster/raw/main/step-ca/install/step-postgresql.sh | bash -s - ${terraform_data.postgresqlname[count.index].output}",
     ]
   }
 
