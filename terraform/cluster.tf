@@ -2,11 +2,18 @@
 # Указываем ВЦОД в котором порт будет создан, сеть к которой он должен быть присоединён и IP-адрес, а также шаблон брандмауэра
 
 resource "rustack_port" "cluster_port" {
-  count = var.SERVERS_NUM
-  vdc_id = data.rustack_vdc.iconicvdc.id
+  count      = var.SERVERS_NUM
+  vdc_id     = data.rustack_vdc.iconicvdc.id
   ip_address = "10.0.1.${count.index + 10}"
   network_id = data.rustack_network.iconicnet.id
-  firewall_templates = [data.rustack_firewall_template.allow_default.id, data.rustack_firewall_template.allow_web.id, data.rustack_firewall_template.allow_ssh.id, data.rustack_firewall_template.allow_icmp.id, data.rustack_firewall_template.allow_kubeapi.id]
+  firewall_templates = [
+    data.rustack_firewall_template.allow_default.id,
+    data.rustack_firewall_template.allow_web.id,
+    data.rustack_firewall_template.allow_ssh.id,
+    data.rustack_firewall_template.allow_icmp.id,
+    data.rustack_firewall_template.allow_kubeapi.id,
+    data.rustack_firewall_template.allow_postgresql.id
+  ]
 }
 
 #resource "time_static" "cluster_update" {
@@ -17,14 +24,14 @@ resource "rustack_port" "cluster_port" {
 #}
 
 data "template_file" "cluster-cloud-config" {
-  count = var.SERVERS_NUM
+  count    = var.SERVERS_NUM
   template = file("cluster-cloud-config.tpl")
   vars = {
-    USER_LOGIN      = var.USER_LOGIN
+    USER_LOGIN = var.USER_LOGIN
     #public_key = file(var.public_key)
-    STEPPATH        = var.STEPPATH
-    HOSTNAME        = resource.terraform_data.hostname[count.index].output
-    SSH_USER_CA     = file(var.SSH_USER_CA_FILE)
+    STEPPATH    = var.STEPPATH
+    HOSTNAME    = resource.terraform_data.hostname[count.index].output
+    SSH_USER_CA = file(var.SSH_USER_CA_FILE)
   }
 }
 
@@ -33,7 +40,7 @@ data "template_file" "cluster-cloud-config" {
 # Выбираем порт сервера созданный на шаге 9
 # Указываем, что необходимо получить публичный адрес.
 resource "rustack_vm" "cluster" {
-  count = var.SERVERS_NUM
+  count  = var.SERVERS_NUM
   vdc_id = data.rustack_vdc.iconicvdc.id
   name   = resource.terraform_data.hostname[count.index].output
   cpu    = var.CLUSTER_SERVER[count.index].cpu
@@ -44,7 +51,7 @@ resource "rustack_vm" "cluster" {
   user_data   = data.template_file.cluster-cloud-config[count.index].rendered
 
   lifecycle {
-     ignore_changes = [ user_data ]
+    ignore_changes = [user_data]
   }
   system_disk {
     size               = var.CLUSTER_SERVER[count.index].disk
@@ -62,29 +69,29 @@ resource "terraform_data" "hostname" {
 }
 
 resource "rustack_dns" "cicd_ws_dns" {
-    name = "cicd.ws."
-    project_id = data.rustack_project.iconicproject.id
+  name       = "cicd.ws."
+  project_id = data.rustack_project.iconicproject.id
 }
 resource "rustack_dns_record" "node_ws_record" {
-    count = var.SERVERS_NUM
-    dns_id = resource.rustack_dns.cicd_ws_dns.id
-    type = "A"
-    host = "${resource.terraform_data.hostname[count.index].output}."
-    data = resource.rustack_vm.cluster[count.index].floating_ip
+  count  = var.SERVERS_NUM
+  dns_id = resource.rustack_dns.cicd_ws_dns.id
+  type   = "A"
+  host   = "${resource.terraform_data.hostname[count.index].output}."
+  data   = resource.rustack_vm.cluster[count.index].floating_ip
 }
 
 resource "rustack_dns_record" "cluster_ws_record" {
-    count = var.SERVERS_NUM
-    dns_id = resource.rustack_dns.cicd_ws_dns.id
-    type = "A"
-    host = "${var.CLUSTER_DOMAIN}."
-    data = resource.rustack_vm.cluster[count.index].floating_ip
+  count  = var.SERVERS_NUM
+  dns_id = resource.rustack_dns.cicd_ws_dns.id
+  type   = "A"
+  host   = "${var.CLUSTER_DOMAIN}."
+  data   = resource.rustack_vm.cluster[count.index].floating_ip
 }
 
 resource "rustack_dns_record" "any_cluster_ws_record" {
-    count = var.SERVERS_NUM>0 ? 1 : 0
-    dns_id = resource.rustack_dns.cicd_ws_dns.id
-    type = "A"
-    host = "*.${var.CLUSTER_DOMAIN}."
-    data = resource.rustack_vm.cluster[0].floating_ip
+  count  = var.SERVERS_NUM > 0 ? 1 : 0
+  dns_id = resource.rustack_dns.cicd_ws_dns.id
+  type   = "A"
+  host   = "*.${var.CLUSTER_DOMAIN}."
+  data   = resource.rustack_vm.cluster[0].floating_ip
 }
