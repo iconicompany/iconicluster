@@ -28,6 +28,7 @@ resource "null_resource" "step_cli" {
   provisioner "remote-exec" {
     on_failure = fail
     inline = [
+      "set -o errexit",
       "curl -Ls https://github.com/iconicompany/iconicluster/raw/main/step-ca/install/step-cli.sh | bash -",
       "curl -Ls https://github.com/iconicompany/iconicluster/raw/main/step-ca/install/step-sshd.sh |  env STEP_TOKEN=${data.external.ssh_token[count.index].result.TOKEN} bash -",
     ]

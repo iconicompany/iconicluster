@@ -36,6 +36,7 @@ resource "null_resource" "step_k3s_cert" {
   provisioner "remote-exec" {
     on_failure = fail
     inline = [
+      "set -o errexit",
       "sudo mkdir -p ${var.STEPCERTPATH}",
       "sudo env STEP_TOKEN=${data.external.step_k3s_token[count.index].result.TOKEN} step ca certificate k3s ${var.STEPCERTPATH}/k3s.crt ${var.STEPCERTPATH}/k3s.key -f --provisioner ${var.STEP_PROVISIONER}",
       "sudo systemctl enable --now cert-renewer@k3s.timer"
@@ -76,6 +77,7 @@ resource "null_resource" "step_k3s_ca" {
   provisioner "remote-exec" {
     on_failure = fail
     inline = [
+      "set -o errexit",
       "sudo mkdir -p ${local.source_ca_path}/$(dirname ${each.value}) ${local.target_ca_path}/$(dirname ${each.value})",
       "sudo env STEP_TOKEN=${data.external.step_k3s_ca_token[each.key].result.TOKEN} step ca certificate ${replace(each.value, "/", "-")} ${local.source_ca_path}/${each.value}.crt ${local.source_ca_path}/${each.value}.key --provisioner ${var.STEP_PROVISIONER_KUBE}",
       "sudo cp ${local.source_ca_path}/${each.value}.crt ${local.target_ca_path}/${each.value}.crt",
