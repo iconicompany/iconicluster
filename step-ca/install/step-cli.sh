@@ -39,5 +39,8 @@ curl -LO https://github.com/iconicompany/iconicluster/raw/main/step-ca/systemd/c
 sudo mv -v cert-renewer@.service cert-renewer@.timer cert-renewer-user@.service cert-renewer-user@.timer /etc/systemd/system/
 rm -rf ${WORK_DIR}
 
+# add current user to step group
+sudo gpasswd -a ${USER} step
+
 # Rescan the systemd unit files
 sudo systemctl daemon-reload
