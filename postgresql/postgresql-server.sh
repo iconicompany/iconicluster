@@ -17,6 +17,7 @@ CN=${1}
 
 test -f $(which step) || error_exit "step command not detected in path, please install it"
 
+sudo apt update
 sudo apt install  --no-upgrade postgresql postgresql-client
 
 PG_HBA=/etc/postgresql/14/main/pg_hba.conf
