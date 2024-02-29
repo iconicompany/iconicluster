@@ -3,6 +3,23 @@ resource "terraform_data" "postgresqlname" {
   input = "postgresql${count.index + 10}.${var.CLUSTER_TLD}"
 }
 
+# install postgresql server
+resource "null_resource" "postgresql_server" {
+  count = var.SERVERS_NUM
+  triggers = {
+    vm_id = rustack_vm.cluster[count.index].id
+  }
+  connection {
+    host = rustack_vm.cluster[count.index].floating_ip
+    user = var.USER_LOGIN
+  }
+  provisioner "remote-exec" {
+    on_failure = fail
+    inline     = ["sudo apt update && sudo apt install  --no-upgrade postgresql postgresql-client"]
+  }
+
+}
+
 # generate token for DB client certificate
 data "external" "step_postgresql_token" {
   count   = var.SERVERS_NUM
@@ -17,9 +34,9 @@ data "external" "step_postgresql_token" {
 }
 
 # generate DB client certificate
-resource "null_resource" "step_postgresql_server" {
-  count = var.SERVERS_NUM
-  depends_on = [null_resource.step_cli]
+resource "null_resource" "step_postgresql" {
+  count      = var.SERVERS_NUM
+  depends_on = [null_resource.step_cli, null_resource.postgresql_server]
   triggers = {
     vm_id = rustack_vm.cluster[count.index].id
   }

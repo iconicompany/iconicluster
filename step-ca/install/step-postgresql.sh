@@ -4,21 +4,12 @@ export STEPCERTPATH=${STEPCERTPATH:-/etc/step/certs}
 export STEP_TOKEN=${STEP_TOKEN}
 export STEP_PASSWORD_FILE=${STEP_PASSWORD_FILE}
 
-function error_exit() {
-  echo "$1" 1>&2
-  exit 1
-}
 if [ "$1" == "" ] ; then
     echo "ERROR: No cn given"
     echo "USAGE: $0 <cn>"
     exit 1
 fi
 CN=${1}
-
-test -f $(which step) || error_exit "step command not detected in path, please install it"
-
-sudo apt update
-sudo apt install  --no-upgrade postgresql postgresql-client
 
 PG_HBA=/etc/postgresql/14/main/pg_hba.conf
 PG_HBA_CONFIG="hostssl all             all             all                     cert clientcert=verify-full clientname=DN  map=iconicompany"

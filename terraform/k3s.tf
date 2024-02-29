@@ -40,7 +40,7 @@ module "k3s" {
 
 }
 resource "postgresql_role" "k3s" {
-  depends_on = [ null_resource.step_postgresql_server ]
+  depends_on = [ null_resource.step_postgresql ]
   name  = "k3s"
   login = true
 }
