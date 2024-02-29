@@ -24,7 +24,7 @@ PG_HBA=/etc/postgresql/14/main/pg_hba.conf
 PG_HBA_CONFIG="hostssl all             all             all                     cert clientcert=verify-full clientname=DN  map=iconicompany"
 
 PG_IDENT=/etc/postgresql/14/main/pg_ident.conf
-PG_IDENT_CONFIG='iconicompany    "/^CN=(.*),OU=users,O=iconicompany,C=ru\$"    \1'
+PG_IDENT_CONFIG='iconicompany    "/^CN=(.*),OU=users,O=iconicompany,C=ru$"    \1'
 
 # enable SSL
 if ! sudo grep -Fq iconicompany $PG_HBA; then
