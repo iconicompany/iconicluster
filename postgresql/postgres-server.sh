@@ -24,4 +24,7 @@ fi
 if ! sudo grep -Fq iconicompany $PG_IDENT; then
     echo $PG_IDENT_CONFIG | sudo tee -a $PG_IDENT
 fi
-sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /etc/postgresql/14/main/postgresql.conf
+#sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /etc/postgresql/14/main/postgresql.conf
+echo "listen_addresses = '*'" | sudo tee  /etc/postgresql/14/main/conf.d/iconicloud.conf
+
+sudo systemctl restart postgresql
