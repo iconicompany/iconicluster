@@ -20,16 +20,13 @@ data "external" "step_k3s_token" {
 
 # generate DB client certificate
 resource "null_resource" "step_k3s_cert" {
-  count = var.SERVERS_NUM
+  count      = var.SERVERS_NUM
   depends_on = [null_resource.step_cli]
   triggers = {
     vm_id = rustack_vm.cluster[count.index].id
   }
   connection {
-    #host     = resource.terraform_data.hostname[0].output
-    # line below not working when SERVERS_NUM=0
     host = rustack_vm.cluster[count.index].floating_ip
-    #host      = var.CLUSTER_DOMAIN
     user = var.USER_LOGIN
   }
 
@@ -68,9 +65,7 @@ resource "null_resource" "step_k3s_ca" {
   for_each = local.certificates_types
   connection {
     #host     = resource.terraform_data.hostname[0].output
-    # line below not working when SERVERS_NUM=0
     host = rustack_vm.cluster[0].floating_ip
-    #host      = var.CLUSTER_DOMAIN
     user = var.USER_LOGIN
   }
 

@@ -62,6 +62,7 @@ provider "postgresql" {
   database    = "postgres"
   username    = var.USER_LOGIN
   sslmode     = "verify-full"
+  superuser   = false
   sslrootcert = pathexpand(var.CLUSTER_CA_CERTIFICATE)
   clientcert {
     cert = pathexpand(var.CLIENT_CERTIFICATE)

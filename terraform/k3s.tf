@@ -4,7 +4,7 @@ module "k3s" {
   #depends_on_   = resource.rustack_vm.cluster 
   depends_on_    = null_resource.step_k3s_ca
   k3s_version    = "latest"
-  cluster_domain = "cluster.${var.CLUSTER_DOMAIN}"
+  cluster_domain = "${var.CLUSTER_DOMAIN}"
   cidr = {
     pods     = "10.42.0.0/16"
     services = "10.43.0.0/16"
@@ -21,7 +21,7 @@ module "k3s" {
 
   servers = {
     for i in range(length(rustack_vm.cluster)) :
-    "node${i + 10}.${var.CLUSTER_DOMAIN}" => {
+    "node${i + 10}.${var.CLUSTER_TLD}" => {
       ip = rustack_port.cluster_port[i].ip_address
       connection = {
         host = rustack_vm.cluster[i].floating_ip
@@ -56,9 +56,7 @@ resource "postgresql_database" "k3s" {
 resource "null_resource" "k3s_finalize" {
   depends_on = [module.k3s]
   connection {
-    # line below not working when SERVERS_NUM=0
     host = rustack_vm.cluster[0].floating_ip
-    #host      = var.CLUSTER_DOMAIN
     user = var.USER_LOGIN
   }
 

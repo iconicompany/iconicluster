@@ -1,6 +1,6 @@
 resource "terraform_data" "postgresqlname" {
   count = var.SERVERS_NUM
-  input = "postgresql${count.index + 10}.${var.CLUSTER_DOMAIN}"
+  input = "postgresql${count.index + 10}.${var.CLUSTER_TLD}"
 }
 
 # generate token for DB client certificate
@@ -24,10 +24,7 @@ resource "null_resource" "step_postgresql_server" {
     vm_id = rustack_vm.cluster[count.index].id
   }
   connection {
-    #host     = resource.terraform_data.hostname[0].output
-    # line below not working when SERVERS_NUM=0
     host = rustack_vm.cluster[count.index].floating_ip
-    #host      = var.CLUSTER_DOMAIN
     user = var.USER_LOGIN
   }
 
