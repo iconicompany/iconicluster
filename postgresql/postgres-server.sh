@@ -42,6 +42,6 @@ EOT
 curl -Ls https://github.com/iconicompany/iconicluster/raw/main/step-ca/bin/step-cert-service.sh | bash -s - ${CN} postgresql
 # certificate and key access for postgresql
 sudo gpasswd -a postgres step
-## allow creation of DB
-sudo -u postgres createuser ${USER} -d
+## allow database and role creation for current user
+sudo -u postgres createuser ${USER} -d -r
 sudo systemctl restart postgresql
