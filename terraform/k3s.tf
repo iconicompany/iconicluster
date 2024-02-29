@@ -1,22 +1,26 @@
+locals {
+  CLUSTER_SAN = "kube.${var.CLUSTER_TLD}" 
+  CLUSTER_HOST = "kube.${var.CLUSTER_TLD}:6443" 
+}
 module "k3s" {
   source = "github.com/iconicompany/terraform-module-k3s"
 
   #depends_on_   = resource.rustack_vm.cluster 
   depends_on_    = null_resource.step_k3s_ca
   k3s_version    = "latest"
-  cluster_domain = "${var.CLUSTER_DOMAIN}"
+  cluster_domain = "cluster.${var.CLUSTER_TLD}"
   cidr = {
     pods     = "10.42.0.0/16"
     services = "10.43.0.0/16"
   }
-  drain_timeout            = "30s"
+  drain_timeout            = "60s"
   generate_ca_certificates = false
   managed_fields           = ["label", "taint"] // ignore annotations
   use_sudo                 = true
   global_flags = [
     "--disable=traefik",
     "--secrets-encryption",
-    "--tls-san ${var.CLUSTER_DOMAIN}"
+    "--tls-san ${local.CLUSTER_SAN}"
   ]
 
   servers = {

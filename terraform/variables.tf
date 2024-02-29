@@ -44,13 +44,8 @@ variable "CLUSTER_SERVER" {
     }
   ]
 }
-variable "CLUSTER_DOMAIN" {
-  description = "Cluster domain name"
-  type        = string
-}
-
 variable "CLUSTER_TLD" {
-  description = "Cluster top level domain name"
+  description = "Cluster top level domain name, e.g example.com"
   type        = string
 }
 
@@ -84,7 +79,7 @@ variable "STEPCERTPATH" {
 }
 
 variable "STEP_CA_URL" {
-  description = "StepCA STEP_CA_URL"
+  description = "StepCA STEP_CA_URL, e.g. https://ca.example.com:4443"
   type        = string
 }
 

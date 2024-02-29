@@ -34,7 +34,7 @@ provider "rustack" {
   token        = var.RUSTACK_TOKEN
 }
 provider "kubectl" {
-  host                   = "${var.CLUSTER_DOMAIN}:6443"
+  host                   = "${local.CLUSTER_HOST}"
   cluster_ca_certificate = file(pathexpand(var.CLUSTER_CA_CERTIFICATE))
   client_certificate     = file(pathexpand(var.CLIENT_CERTIFICATE))
   client_key             = file(pathexpand(var.CLIENT_KEY))
@@ -42,14 +42,14 @@ provider "kubectl" {
 }
 provider "helm" {
   kubernetes {
-    host                   = "${var.CLUSTER_DOMAIN}:6443"
+    host                   = "${local.CLUSTER_HOST}"
     cluster_ca_certificate = file(pathexpand(var.CLUSTER_CA_CERTIFICATE))
     client_certificate     = file(pathexpand(var.CLIENT_CERTIFICATE))
     client_key             = file(pathexpand(var.CLIENT_KEY))
   }
 }
 provider "kubernetes" {
-  host                   = "${var.CLUSTER_DOMAIN}:6443"
+  host                   = "${local.CLUSTER_HOST}"
   cluster_ca_certificate = file(pathexpand(var.CLUSTER_CA_CERTIFICATE))
   client_certificate     = file(pathexpand(var.CLIENT_CERTIFICATE))
   client_key             = file(pathexpand(var.CLIENT_KEY))

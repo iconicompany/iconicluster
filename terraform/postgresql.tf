@@ -15,7 +15,7 @@ resource "null_resource" "postgresql_server" {
   }
   provisioner "remote-exec" {
     on_failure = fail
-    inline     = ["sudo apt update && sudo apt install  --no-upgrade postgresql postgresql-client"]
+    inline     = ["sudo apt update && sudo apt install  --no-upgrade -y  postgresql postgresql-client"]
   }
 
 }
