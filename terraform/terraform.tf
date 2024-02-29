@@ -57,7 +57,7 @@ provider "kubernetes" {
 
 
 provider "postgresql" {
-  host        = var.K3S_DB_HOST
+  host        = var.POSTGRESQL_HOST
   port        = var.K3S_DB_PORT
   database    = "postgres"
   username    = var.USER_LOGIN

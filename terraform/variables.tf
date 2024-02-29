@@ -156,7 +156,7 @@ variable "CLIENT_KEY" {
   type        = string
 }
 
-variable "K3S_DB_HOST" {
+variable "POSTGRESQL_HOST" {
   description = "database server host for k3s"
   type        = string
 }

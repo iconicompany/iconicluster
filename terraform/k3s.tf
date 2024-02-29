@@ -2,7 +2,7 @@ module "k3s" {
   source = "github.com/iconicompany/terraform-module-k3s"
 
   #depends_on_   = resource.rustack_vm.cluster 
-  depends_on_    = null_resource.step_k3s_ca
+  depends_on_    = [null_resource.step_postgresql_server, null_resource.step_k3s_ca]
   k3s_version    = "latest"
   cluster_domain = "cluster.${var.CLUSTER_DOMAIN}"
   cidr = {
@@ -28,7 +28,7 @@ module "k3s" {
         user = var.USER_LOGIN
       }
       flags = [
-        "--datastore-endpoint=\"postgres://${var.K3S_DB_USER}@${var.K3S_DB_HOST}:${var.K3S_DB_PORT}/${postgresql_database.k3s.name}\"",
+        "--datastore-endpoint=\"postgres://${var.K3S_DB_USER}@${var.POSTGRESQL_HOST}:${var.K3S_DB_PORT}/${postgresql_database.k3s.name}\"",
         "--datastore-cafile=\"${pathexpand(var.CLUSTER_CA_CERTIFICATE)}\"",
         "--datastore-certfile=\"${var.STEPCERTPATH}/k3s.crt\"",
         "--datastore-keyfile=\"${var.STEPCERTPATH}/k3s.key\""
