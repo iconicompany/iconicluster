@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
 set -e
-. settings.default
+export STEPPATH=${STEPPATH:-/etc/step-ca}
+export STEPCERTPATH=${STEPCERTPATH:-/etc/step/certs}
 
-SERVICE=${1:-${USER}}
-CN="${2:-${SERVICE}}"
+if [ "$1" == "" -o "$2" == "" ] ; then
+    echo "ERROR: No cn or service given"
+    echo "USAGE: $0 <cn> <service>"
+    exit 1
+fi
+
+CN=${1}
+SERVICE=${2}
 
 cd $STEPCERTPATH
-step ca certificate $CN $SERVICE.crt $SERVICE.key
-step certificate inspect $SERVICE.crt
-[ "$EUID" -eq 0 ] && chmod g+r $SERVICE.*
+sudo -E step ca certificate $CN $SERVICE.crt $SERVICE.key
+sudo step certificate inspect $SERVICE.crt
+#[ "$EUID" -eq 0 ] && 
+sudo chmod g+r $SERVICE.crt $SERVICE.key
 
 sudo systemctl enable --now cert-renewer@${SERVICE}.timer
