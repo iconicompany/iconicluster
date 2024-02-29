@@ -40,5 +40,8 @@ ssl_key_file = '${STEPCERTPATH}/postgresql.key'
 EOT
 
 curl -Ls https://github.com/iconicompany/iconicluster/raw/main/step-ca/bin/step-cert-service.sh | bash -s - ${CN} postgresql
+# certificate and key access for postgresql
 sudo gpasswd -a postgres step
+## allow creation of DB
+sudo -u postgres createuser ${USER} -d
 sudo systemctl restart postgresql
