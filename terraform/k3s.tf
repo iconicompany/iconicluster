@@ -1,5 +1,5 @@
 module "k3s" {
-  source = "xunleii/k3s/module"
+  source = "github.com/iconicompany/terraform-module-k3s"
 
   #depends_on_   = resource.rustack_vm.cluster 
   depends_on_    = null_resource.step_k3s_ca
