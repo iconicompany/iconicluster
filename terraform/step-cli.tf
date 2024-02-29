@@ -28,8 +28,8 @@ resource "null_resource" "step_cli" {
   provisioner "remote-exec" {
     on_failure = fail
     inline = [
-      "curl -Ls https://github.com/iconicompany/iconicluster/step-ca/raw/main/install/step-cli.sh | bash -",
-      "curl -Ls https://github.com/iconicompany/iconicluster/step-ca/raw/main/install/step-sshd.sh |  env STEP_TOKEN=${data.external.ssh_token[count.index].result.TOKEN} bash -",
+      "curl -Ls https://github.com/iconicompany/iconicluster/raw/main/step-ca/install/step-cli.sh | bash -",
+      "curl -Ls https://github.com/iconicompany/iconicluster/raw/main/step-ca/install/step-sshd.sh |  env STEP_TOKEN=${data.external.ssh_token[count.index].result.TOKEN} bash -",
     ]
   }
 }
