@@ -4,7 +4,7 @@
 resource "rustack_port" "cluster_port" {
   count      = var.SERVERS_NUM
   vdc_id     = data.rustack_vdc.iconicvdc.id
-  #ip_address = "10.0.1.${count.index + 10}"
+  ip_address = "10.0.1.${count.index + 100}"
   network_id = data.rustack_network.iconicnet.id
   firewall_templates = [
     data.rustack_firewall_template.allow_default.id,
