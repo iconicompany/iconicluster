@@ -1,0 +1,58 @@
+config:
+  # Set it to a valid URL
+  issuer: http://dex.cicd.ws
+
+  # See https://dexidp.io/docs/storage/ for more options
+  storage:
+    type: memory
+
+  # Enable at least one connector
+  # See https://dexidp.io/docs/connectors/ for more options
+  enablePasswordDB: true
+ingress:
+  enabled: true
+
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+
+  hosts:
+    - host: dex.cicd.ws
+      paths:
+        - path: /
+
+  tls:
+    - hosts:
+        - dex.cicd.ws
+      secretName: dex.cicd.ws
+connectors:
+- type: github
+  # Required field for connector id.
+  id: github
+  # Required field for connector name.
+  name: GitHub
+  config:
+    # Credentials can be string literals or pulled from the environment.
+    clientID: 7ff7b68ced8b100389a1
+    clientSecret: 8111075ab90bf5bf6f348f478e57e843cc0ff7df
+    redirectURI: https://dex.cicd.ws/callback
+
+    orgs:
+    - name: iconicompany
+      # A white list of teams. Only include group claims for these teams.
+      teams:
+      - icompany
+      - iconicme
+    # Flag which indicates that all user groups and teams should be loaded.
+    loadAllGroups: false
+
+    # Optional choice between 'name' (default), 'slug', or 'both'.
+    #
+    # As an example, group claims for member of 'Site Reliability Engineers' in
+    # Acme organization would yield:
+    #   - ['acme:Site Reliability Engineers'] for 'name'
+    #   - ['acme:site-reliability-engineers'] for 'slug'
+    #   - ['acme:Site Reliability Engineers', 'acme:site-reliability-engineers'] for 'both'
+    teamNameField: slug
+    # flag which will switch from using the internal GitHub id to the users handle (@mention) as the user id.
+    # It is possible for a user to change their own user name but it is very rare for them to do so
+    useLoginAsID: true

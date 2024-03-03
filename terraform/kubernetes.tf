@@ -3,8 +3,8 @@ module "nginx-controller" {
   source     = "terraform-iaac/nginx-controller/helm"
 }
 module "cert_manager" {
-  depends_on                             = [module.nginx-controller]
-  source                                 = "terraform-iaac/cert-manager/kubernetes"
+  depends_on = [module.nginx-controller]
+  source     = "terraform-iaac/cert-manager/kubernetes"
   #chart_version                          = "1.14.3"
   cluster_issuer_email                   = var.CLUSTER_ISSUER_EMAIL
   cluster_issuer_name                    = "letsencrypt-prod"
@@ -12,3 +12,13 @@ module "cert_manager" {
 }
 
 
+resource "helm_release" "dex" {
+  name       = "dex"
+  repository = "https://charts.dexidp.io"
+  chart      = "dex/dex"
+  namespace  = "dex"
+
+  values = [
+    "${file("kuberenetes/dex-values.yaml")}"
+  ]
+}
