@@ -11,14 +11,3 @@ module "cert_manager" {
   cluster_issuer_private_key_secret_name = "letsencrypt-prod"
 }
 
-
-resource "helm_release" "dex" {
-  name       = "dex"
-  repository = "https://charts.dexidp.io"
-  chart      = "dex/dex"
-  namespace  = "dex"
-
-  values = [
-    "${file("kuberenetes/dex-values.yaml")}"
-  ]
-}

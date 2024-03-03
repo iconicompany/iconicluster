@@ -1,7 +1,7 @@
 # Инициализация Terraform и конфигурации провайдера (шаг 1)
 terraform {
   backend "pg" {
-    conn_str = "postgres://postgresql01.jupiter.icncd.ru/iconicluster"
+    conn_str = "postgres://postgresql01.iconicompany.com/iconicluster"
   }
 
   required_version = ">= 1.0.0"
