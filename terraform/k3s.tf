@@ -1,6 +1,6 @@
 locals {
-  CLUSTER_SAN = "kube.${var.CLUSTER_TLD}" 
-  CLUSTER_HOST = "kube.${var.CLUSTER_TLD}:6443" 
+  CLUSTER_SAN = "kube01.${var.CLUSTER_TLD}" 
+  CLUSTER_HOST = "kube01.${var.CLUSTER_TLD}:6443" 
 }
 module "k3s" {
   source = "github.com/iconicompany/terraform-module-k3s"
@@ -8,7 +8,7 @@ module "k3s" {
   #depends_on_   = resource.rustack_vm.cluster 
   depends_on_    = null_resource.step_k3s_ca
   k3s_version    = "latest"
-  cluster_domain = "cluster.${var.CLUSTER_TLD}"
+  cluster_domain = "cluster01.${var.CLUSTER_TLD}"
   cidr = {
     pods     = "10.42.0.0/16"
     services = "10.43.0.0/16"
