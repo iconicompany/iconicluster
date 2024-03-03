@@ -68,13 +68,14 @@ resource "terraform_data" "hostname" {
   input = "node${count.index + 10}.${var.CLUSTER_TLD}"
 }
 
-resource "rustack_dns" "cicd_ws_dns" {
-  name       = "cicd.ws."
+resource "rustack_dns" "cluster_dns" {
+  name       = "${var.CLUSTER_TLD}."
   project_id = data.rustack_project.iconicproject.id
 }
+
 resource "rustack_dns_record" "node_ws_record" {
   count  = var.SERVERS_NUM
-  dns_id = resource.rustack_dns.cicd_ws_dns.id
+  dns_id = resource.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${resource.terraform_data.hostname[count.index].output}."
   data   = resource.rustack_vm.cluster[count.index].floating_ip
@@ -82,7 +83,7 @@ resource "rustack_dns_record" "node_ws_record" {
 
 resource "rustack_dns_record" "cluster_ws_record" {
   count  = var.SERVERS_NUM
-  dns_id = resource.rustack_dns.cicd_ws_dns.id
+  dns_id = resource.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${var.CLUSTER_TLD}."
   data   = resource.rustack_vm.cluster[count.index].floating_ip
@@ -90,7 +91,7 @@ resource "rustack_dns_record" "cluster_ws_record" {
 
 resource "rustack_dns_record" "any_cluster_ws_record" {
   count  = var.SERVERS_NUM > 0 ? 1 : 0
-  dns_id = resource.rustack_dns.cicd_ws_dns.id
+  dns_id = resource.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "*.${var.CLUSTER_TLD}."
   data   = resource.rustack_vm.cluster[0].floating_ip
