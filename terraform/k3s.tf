@@ -25,7 +25,7 @@ module "k3s" {
 
   servers = {
     for i in range(length(rustack_vm.cluster)) :
-    "node${i + 10}.${var.CLUSTER_TLD}" => {
+    "node0${i}.${var.CLUSTER_TLD}" => {
       ip = rustack_port.cluster_port[i].ip_address
       connection = {
         host = rustack_vm.cluster[i].floating_ip

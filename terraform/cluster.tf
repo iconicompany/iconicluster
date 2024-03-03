@@ -4,7 +4,7 @@
 resource "rustack_port" "cluster_port" {
   count      = var.SERVERS_NUM
   vdc_id     = data.rustack_vdc.iconicvdc.id
-  ip_address = "10.0.1.${count.index + 10}"
+  #ip_address = "10.0.1.${count.index + 10}"
   network_id = data.rustack_network.iconicnet.id
   firewall_templates = [
     data.rustack_firewall_template.allow_default.id,
@@ -65,7 +65,7 @@ resource "rustack_vm" "cluster" {
 
 resource "terraform_data" "hostname" {
   count = var.SERVERS_NUM
-  input = "node${count.index + 10}.${var.CLUSTER_TLD}"
+  input = "node0${count.index}.${var.CLUSTER_TLD}"
 }
 
 resource "rustack_dns" "cluster_dns" {

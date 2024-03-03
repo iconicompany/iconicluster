@@ -1,6 +1,6 @@
 resource "terraform_data" "postgresqlname" {
   count = var.SERVERS_NUM
-  input = "postgresql${count.index + 10}.${var.CLUSTER_TLD}"
+  input = "postgresql0${count.index}.${var.CLUSTER_TLD}"
 }
 
 # install postgresql server
