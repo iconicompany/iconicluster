@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: mailcow
+subsets:
+- addresses:
+  - ip: 10.0.1.21
+  ports:
+  - name: mailcow
+    port: 8080
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mailcow
+spec:
+  ports:
+  - name: mailcow
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  type: ClusterIP
+  clusterIP: None
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mailcow
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+    - secretName: mail.iconicompany.com
+      hosts:
+        - mail.iconicompany.com
+  rules:
+  - host: mail.iconicompany.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mailcow
+            port:
+              number: 80
