@@ -1,0 +1,19 @@
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority: /home/USER/.step/certs/root_ca.crt
+    server: https://kube01.icncd.ru:6443
+  name: kube01.icncd.ru
+contexts:
+- context:
+    cluster: kube01.icncd.ru
+    USER: USER
+  name: kube01.icncd.ru-USER
+current-context: kube01.icncd.ru-USER
+kind: Config
+preferences: {}
+USERs:
+- name: USER
+  USER:
+    client-certificate: /home/USER/.step/certs/my.crt
+    client-key: /home/USER/.step/certs/my.key
