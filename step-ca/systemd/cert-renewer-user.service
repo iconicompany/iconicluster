@@ -1,0 +1,35 @@
+[Unit]
+Description=Certificate renewer
+After=network-online.target
+Documentation=https://smallstep.com/docs/step-ca/certificate-authority-server-production
+StartLimitIntervalSec=0
+PartOf=cert-renewer-user.target
+
+[Service]
+Type=oneshot
+User=%i
+
+Environment=STEPPATH=/etc/step-ca \
+            HOME=/home/%i \
+            CERT_LOCATION=/home/%i/.step/certs/my.crt \
+            KEY_LOCATION=/home/%i/.step/certs/my.key \
+            PEM_LOCATION=/home/%i/.step/certs/my.pem \
+            PGCERTPATH=/home/$%i/.postgresql \
+            CERT_LOCATION_PG=/home/%i/.postgresql/postgresql.crt \
+            KEY_LOCATION_PG=/home/%i/.postgresql/postgresql.key \
+            KEY_LOCATION_PGPK8=/home/%i/.postgresql/postgresql.pk8 \
+            CA_LOCATION=/etc/step-ca/certs/root_ca.crt \
+            CA_LOCATION_PG=/home/%i/.postgresql/root.crt
+
+; ExecCondition checks if the certificate is ready for renewal,
+; based on the exit status of the command.
+; (In systemd <242, you can use ExecStartPre= here.)
+ExecCondition=/usr/bin/step certificate needs-renewal ${CERT_LOCATION}
+
+; ExecStart renews the certificate, if ExecStartPre was successful.
+ExecStart=/usr/bin/step ca renew --force ${CERT_LOCATION} ${KEY_LOCATION}
+
+; configure postgres and dbeaver client
+ExecStartPost=/usr/bin/env sh -c "cat ${CERT_LOCATION} ${KEY_LOCATION} > ${PEM_LOCATION}; [ -d ${PGCERTPATH} ] && (ln -fs ${KEY_LOCATION} ${KEY_LOCATION_PG}; ln -fs ${CERT_LOCATION} ${CERT_LOCATION_PG}; ln -fs ${CA_LOCATION} ${CA_LOCATION_PG}; openssl pkcs8 -topk8 -v1 PBE-SHA1-3DES -nocrypt -inform PEM -outform DER -in ${KEY_LOCATION_PG} -out ${KEY_LOCATION_PGPK8})"
+[Install]
+WantedBy=multi-user.target

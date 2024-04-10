@@ -32,8 +32,10 @@ sudo chmod g+s,o-rwx ${STEPCERTPATH}
 
 WORK_DIR=`mktemp -d `
 cd ${WORK_DIR}
-curl -LO https://github.com/smallstep/cli/raw/master/systemd/cert-renewer@.service
-curl -LO https://github.com/smallstep/cli/raw/master/systemd/cert-renewer@.timer
+#curl -LO https://github.com/smallstep/cli/raw/master/systemd/cert-renewer@.service
+#curl -LO https://github.com/smallstep/cli/raw/master/systemd/cert-renewer@.timer
+curl -LO https://github.com/iconicompany/iconicluster/raw/main/step-ca/systemd/cert-renewer@.service
+curl -LO https://github.com/iconicompany/iconicluster/raw/main/step-ca/systemd/cert-renewer@.timer
 curl -LO https://github.com/iconicompany/iconicluster/raw/main/step-ca/systemd/cert-renewer-user@.service
 curl -LO https://github.com/iconicompany/iconicluster/raw/main/step-ca/systemd/cert-renewer-user@.timer
 sudo mv -v cert-renewer@.service cert-renewer@.timer cert-renewer-user@.service cert-renewer-user@.timer /etc/systemd/system/
