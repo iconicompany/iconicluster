@@ -1,13 +1,13 @@
 set -e
 
-USER=$1
+GROUP=$1
 
-cat <<EOF> ${USER}-rbac.yaml
+cat <<EOF> ${GROUP}-rbac.yaml
 apiVersion: v1
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: ${USER}
+  name: ${GROUP}
   namespace: default
 rules:
 - apiGroups: [""]
@@ -18,17 +18,17 @@ rules:
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: ${USER}
+  name: ${GROUP}
   namespace: default
 subjects:
-- kind: User
-  name: ${USER}
+- kind: Group
+  name: ${GROUP}
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: ${USER}
+  name: ${GROUP}
 EOF
 
-kubectl apply -f ${USER}-rbac.yaml
+kubectl apply -f ${GROUP}-rbac.yaml
 
