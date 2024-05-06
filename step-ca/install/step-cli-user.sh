@@ -39,6 +39,7 @@ step certificate inspect ${CERT_LOCATION}
 ln -vfs ${KEY_LOCATION} ${KEY_LOCATION_PG}
 ln -vfs ${CERT_LOCATION} ${CERT_LOCATION_PG}
 ln -vfs ${CA_LOCATION} ${CA_LOCATION_PG}
+cat ${CERT_LOCATION} ${KEY_LOCATION} > ${PEM_LOCATION}
 
 # required for DBeaver client
 openssl pkcs8 -topk8 -v1 PBE-SHA1-3DES -nocrypt -inform PEM -outform DER -in $KEY_LOCATION_PG -out $KEY_LOCATION_PGPK8
