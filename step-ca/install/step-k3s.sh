@@ -22,16 +22,19 @@ for TYPE in $LEAFTYPE; do
     # and the apiserver instead of passing a cert list into the apiserver, so there's no facility for
     # rotation and things will get very angry if all the SA keys are invalidated.
     if [[ -e $TYPE ]]; then
-      echo "Generating additional k3srnetes service account issuer RSA key"
+      echo "Generating additional Kubernetes service account issuer RSA key"
       OLD_SERVICE_KEY="$(cat $TYPE)"
     else
-      echo "Generating k3srnetes service account issuer RSA key"
+      echo "Generating Kubernetes service account issuer RSA key"
     fi
     openssl genrsa ${OPENSSL_GENRSA_FLAGS:-} -out $TYPE 2048
     echo "${OLD_SERVICE_KEY}" >> $TYPE
   else
-    step ca certificate $TYPE $TYPE.crt $TYPE.key
+    step ca certificate -f $TYPE $TYPE.crt $TYPE.key
   fi
 done
 
-#k3s certificate rotate-ca  --force --path=/etc/step/certs/k3s
+k3s certificate rotate-ca  --path=/etc/step/certs/k3s
+k3s certificate rotate
+systemctl restart k3s
+
