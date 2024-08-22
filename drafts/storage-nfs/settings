@@ -1,4 +1,5 @@
 export NFS_HOST=node01
 export NFS_PATH=/srv/kube
-export NFS_ACCESS=10.42.0.0/16
+export NFS_ACCESS=127.0.0.1
+
 
