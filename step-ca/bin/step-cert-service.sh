@@ -17,6 +17,6 @@ sudo -E step ca certificate $CN $SERVICE.crt $SERVICE.key -f
 sudo step certificate inspect $SERVICE.crt
 sudo cat $SERVICE.crt $SERVICE.key | sudo tee $SERVICE.pem > /dev/null
 #[ "$EUID" -eq 0 ] && 
-sudo chmod g+r $SERVICE.crt $SERVICE.key
+sudo chmod g+r,o-rwx $SERVICE.crt $SERVICE.key $SERVICE.pem
 
 sudo systemctl enable --now cert-renewer@${SERVICE}.timer
