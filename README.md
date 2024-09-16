@@ -4,6 +4,8 @@
 1. Config to connect to the cluster
 https://github.com/iconicompany/iconicluster/blob/main/examples/config
 save to `$HOME/.kube/config`, change `${USER}` to yourself:
+
+Command line:
 `curl -L https://github.com/iconicompany/iconicluster/raw/main/examples/config|envsubst > $HOME/.kube/config`
 
 3. Set Primary email address at https://github.com/settings/emails to corporate (@iconicompany.com)
