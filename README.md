@@ -13,3 +13,7 @@ save to `$HOME/.kube/config`, change `${USER}` to yourself
 
 Installation script for k9s: https://github.com/iconicompany/osboxes/raw/master/ubuntu/apps/k9s.sh
 
+5. Connect to Postgresql: `psql -h postgresql01.kube01.icncd.ru postgres`
+
+![dbeaver01.jpg](docs/dbeaver01.jpg)
+![dbeaver02.jpg](docs/dbeaver02.jpg)
