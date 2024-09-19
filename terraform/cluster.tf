@@ -13,12 +13,14 @@ resource "rustack_port" "cluster_port" {
   ip_address = "10.0.1.${count.index + 101}"
   network_id = data.rustack_network.iconicnet.id
   firewall_templates = [
-    data.rustack_firewall_template.allow_default.id,
-    data.rustack_firewall_template.allow_web.id,
-    data.rustack_firewall_template.allow_ssh.id,
-    data.rustack_firewall_template.allow_icmp.id,
-    data.rustack_firewall_template.allow_kubeapi.id,
-    data.rustack_firewall_template.allow_postgresql.id
+    data.rustack_firewall_template.default.id,
+    data.rustack_firewall_template.web.id,
+    data.rustack_firewall_template.ssh.id,
+    data.rustack_firewall_template.icmp.id,
+    data.rustack_firewall_template.kubeapi.id,
+    data.rustack_firewall_template.postgresql.id,
+    data.rustack_firewall_template.mongodb.id,
+    data.rustack_firewall_template.temporal.id
   ]
 }
 
@@ -95,31 +97,25 @@ resource "rustack_dns_record" "cluster_ws_record" {
   data   = resource.rustack_vm.cluster[count.index].floating_ip
 }
 
-resource "rustack_dns_record" "iconicompany_cluster_record" {
+resource "rustack_dns_record" "any_cluster_record" {
   count  = var.SERVERS_NUM > 0 ? 1 : 0
   dns_id = resource.rustack_dns.cluster_dns.id
   type   = "A"
-  host   = "*.iconicompany.${var.CLUSTER_TLD}."
+  host   = "*.${var.CLUSTER_TLD}."
   data   = resource.rustack_vm.cluster[0].floating_ip
 }
 
-resource "rustack_dns_record" "ilb_cluster_record" {
-  count  = var.SERVERS_NUM > 0 ? 1 : 0
-  dns_id = resource.rustack_dns.cluster_dns.id
-  type   = "A"
-  host   = "*.ilb.${var.CLUSTER_TLD}."
-  data   = resource.rustack_vm.cluster[0].floating_ip
-}
 
 resource "rustack_dns" "cluster_dns2" {
   name       = "icncd.dev."
   project_id = data.rustack_project.iconicproject.id
 }
 
-resource "rustack_dns_record" "iconicompany_cluster_record2" {
+resource "rustack_dns_record" "any_cluster_record2" {
   count  = var.SERVERS_NUM > 0 ? 1 : 0
   dns_id = resource.rustack_dns.cluster_dns2.id
   type   = "A"
-  host   = "*.iconicompany.icncd.dev."
+  host   = "*.icncd.dev."
   data   = resource.rustack_vm.cluster[0].floating_ip
 }
+

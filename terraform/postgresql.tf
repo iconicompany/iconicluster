@@ -1,7 +1,16 @@
 resource "terraform_data" "postgresqlname" {
   count = var.SERVERS_NUM
-  input = "postgresql0${count.index}.${var.CLUSTER_TLD}"
+  input = "postgresql0${count.index+1}.${local.CLUSTER_NAME}"
 }
+
+resource "rustack_dns_record" "postgresql_dns_record" {
+  count  = var.SERVERS_NUM
+  dns_id = resource.rustack_dns.cluster_dns.id
+  type   = "A"
+  host   = "${terraform_data.postgresqlname[count.index].output}."
+  data   = resource.rustack_vm.cluster[count.index].floating_ip
+}
+
 
 # install postgresql server
 resource "null_resource" "postgresql_server" {

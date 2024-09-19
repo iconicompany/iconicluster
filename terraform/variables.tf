@@ -31,9 +31,9 @@ variable "CLUSTER_SERVER" {
   }))
   default = [
     {
-      cpu  = 2
-      ram  = 2
-      disk = 60
+      cpu  = 8
+      ram  = 16
+      disk = 160
       power = true
     },
     {
@@ -78,6 +78,12 @@ variable "STEPCERTPATH" {
   default     = "/etc/step/certs"
 }
 
+variable "STEP_ROOT_CA_PATH" {
+  description = "StepCA root ca path"
+  type        = string
+  default     = "/etc/step-ca/certs/root_ca.crt"
+}
+
 variable "STEP_CA_URL" {
   description = "StepCA STEP_CA_URL, e.g. https://ca.example.com:4443"
   type        = string
@@ -100,14 +106,31 @@ variable "STEP_PASSWORD_FILE" {
   type        = string
 }
 
-variable "STEP_PROVISIONER_KUBE" {
-  description = "StepCA kube provisioner name"
+
+variable "STEP_PROVISIONER_KUBE_CA" {
+  description = "StepCA kube provisioner name for CA generation"
   type        = string
-  default     = "kube"
+  default     = "kube-ca"
 }
 
-variable "STEP_PASSWORD_KUBE" {
-  description = "StepCA password file for TOKEN/CERTIFICATE issue"
+variable "STEP_PASSWORD_KUBE_CA" {
+  description = "StepCA password file for CA generation"
+  type        = string
+}
+variable "STEP_PROVISIONER_AUTOCERT" {
+  description = "StepCA kube provisioner name for autocert"
+  type        = string
+  default     = "autocert"
+}
+
+variable "STEP_PASSWORD_AUTOCERT" {
+  description = "StepCA password file for autocert"
+  type        = string
+}
+
+
+variable "STEP_STATIC_CLIENT_SECRET" {
+  description = "StepCA static client secret"
   type        = string
 }
 
@@ -177,4 +200,30 @@ variable "K3S_DB_USER" {
   description = "database user for k3s"
   type        = string
   default     = "k3s"
+}
+
+variable "DEX_DOMAIN" {
+  description = "DEX_DOMAIN, e.g dex.example.com"
+  type        = string
+}
+variable "GITHUB_CLIENT_ID" {
+  description = "GITHUB_CLIENT_ID for DEX IPD"
+  type        = string
+}
+
+variable "GITHUB_CLIENT_SECRET" {
+  description = "GITHUB_CLIENT_SECRET for DEX IPD"
+  type        = string
+}
+
+
+variable "PGADMIN4_EMAIL" {
+  description = "PGADMIN4_EMAIL"
+  type        = string
+}
+
+
+variable "PGADMIN4_PASSWORD" {
+  description = "PGADMIN4_PASSWORD"
+  type        = string
 }

@@ -1,0 +1,136 @@
+locals {
+  GRAFANA_HOST   =  "grafana.${local.CLUSTER_NAME}"
+}
+resource "rustack_dns_record" "grafana_dns_record" {
+  count  = var.SERVERS_NUM
+  dns_id = resource.rustack_dns.cluster_dns.id
+  type   = "A"
+  host   = "${local.GRAFANA_HOST}."
+  data   = resource.rustack_vm.cluster[count.index].floating_ip
+}
+
+resource "kubernetes_namespace" "grafana" {
+  metadata {
+    name = "grafana"
+  }
+}
+resource "kubernetes_deployment" "grafana" {
+  metadata {
+    name      = "grafana"
+    namespace = kubernetes_namespace.grafana.metadata[0].name
+  }
+
+  spec {
+    selector {
+      match_labels = {
+        app = "grafana"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = "grafana"
+        }
+      }
+
+      spec {
+        container {
+          image = "grafana/grafana:latest"
+          name  = "grafana"
+
+          port {
+            container_port = 3000
+          }
+        }
+      }
+    }
+
+    replicas = 1
+  }
+}
+
+resource "kubernetes_service" "grafana" {
+  metadata {
+    name      = "grafana"
+    namespace = kubernetes_namespace.grafana.metadata[0].name
+  }
+
+  spec {
+    selector = {
+      app = "grafana"
+    }
+
+    port {
+      name        = "http"
+      port        = 3000
+      target_port = 3000
+    }
+
+  }
+}
+
+resource "kubernetes_ingress_v1" "grafana" {
+  metadata {
+    name      = "grafana"
+    namespace = kubernetes_namespace.grafana.metadata[0].name
+    annotations = {
+      "cert-manager.io/cluster-issuer" = "letsencrypt-prod"
+    }
+  }
+  spec {
+    rule {
+        host = local.GRAFANA_HOST
+      http {
+        path {
+          path = "/"
+          backend {
+            service {
+              name = kubernetes_service.grafana.metadata[0].name
+              port {
+                number = kubernetes_service.grafana.spec[0].port[0].port
+              }
+            }
+          }
+        }
+      }
+    }
+    tls {
+      secret_name = local.GRAFANA_HOST
+      hosts       = [local.GRAFANA_HOST]
+    }
+  }
+}
+
+# resource "kubernetes_ingress" "grafana" {
+#   metadata {
+#     name = "grafana"
+#     annotations = {
+#         "cert-manager.io/cluster-issuer" = "letsencrypt-prod"
+#     }
+#   }
+
+#   spec {
+#     backend {
+#       service_name = kubernetes_service.grafana.metadata[0].name
+#       service_port = kubernetes_service.grafana.spec[0].port[0].port
+#     }
+#     rule {
+#       http {
+#         path {
+#           backend {
+#             service_name = kubernetes_service.grafana.metadata[0].name
+#             service_port = kubernetes_service.grafana.spec[0].port[0].port
+#           }
+#           path = "/"
+#         }
+
+#       }
+#     }
+
+#     tls {
+#       secret_name = "grafana.${local.CLUSTER_NAME}"
+#       hosts = [ "grafana.${local.CLUSTER_NAME}" ]
+#     }
+#   }
+# }

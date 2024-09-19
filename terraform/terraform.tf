@@ -1,8 +1,8 @@
 # Инициализация Terraform и конфигурации провайдера (шаг 1)
 terraform {
-  backend "pg" {
-    conn_str = "postgres://postgresql01.iconicompany.com/iconicluster"
-  }
+#  backend "pg" {
+#    conn_str = "postgres://postgresql01.iconicompany.com/iterraform_testing"
+#  }
 
   required_version = ">= 1.0.0"
 
@@ -21,7 +21,7 @@ terraform {
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">=2.0.1"
+      version = "2.31.0"
     }
     postgresql = {
       source = "cyrilgdn/postgresql"
