@@ -18,14 +18,11 @@ config:
       orgs:
       - name: iconicompany
         teams:
-        - icompany
-        - iconicme
-        - supadevs
+        - devops
       loadAllGroups: false
       useLoginAsID: false
   staticClients:
   - id: step-ca
-    secret: ${STEP_STATIC_CLIENT_SECRET}
     name: 'StepCA'
     redirectURIs:
     - 'http://127.0.0.1:9999'

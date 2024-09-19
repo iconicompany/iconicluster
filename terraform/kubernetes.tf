@@ -75,11 +75,14 @@ resource "helm_release" "dex" {
   values = [
     templatefile("charts/dex-values.yaml.tpl", {
       DEX_DOMAIN                = var.DEX_DOMAIN
-      STEP_STATIC_CLIENT_SECRET = var.STEP_STATIC_CLIENT_SECRET
       # GITHUB_CLIENT_ID     = var.GITHUB_CLIENT_ID
       # GITHUB_CLIENT_SECRET = var.GITHUB_CLIENT_SECRET
     })
   ]
+  set_sensitive {
+    name  = "config.staticClients[0].secret"
+    value = var.STEP_STATIC_CLIENT_SECRET
+  }
   set_sensitive {
     name  = "config.connectors[0].config.clientID"
     value = var.GITHUB_CLIENT_ID
