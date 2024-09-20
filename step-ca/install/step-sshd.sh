@@ -20,27 +20,13 @@ echo ${SSH_HOST_CA} |sudo tee ${STEPPATH}/certs/ssh_host_ca_key.pub
 echo ${SSH_USER_CA} |sudo tee ${STEPPATH}/certs/ssh_user_ca_key.pub
 sudo systemctl restart ssh
 
-sudo tee /etc/systemd/system/cert-renewer-ssh.service <<EOT
-[Unit]
-Description=Step SSH certificate renewer
 
-[Service]
-Environment=STEPPATH=/etc/step-ca
-ExecStart=/usr/bin/step ssh renew --force /etc/ssh/ssh_host_ecdsa_key-cert.pub /etc/ssh/ssh_host_ecdsa_key
-EOT
+WORK_DIR=`mktemp -d `
+cd ${WORK_DIR}
+curl -LO https://github.com/iconicompany/iconicluster/raw/main/step-ca/systemd/cert-renewer-ssh.service
+curl -LO https://github.com/iconicompany/iconicluster/raw/main/step-ca/systemd/cert-renewer-ssh.timer
+sudo mv -v cert-renewer-ssh.service cert-renewer-ssh.timer /etc/systemd/system/
+rm -rf ${WORK_DIR}
 
-
-sudo tee /etc/systemd/system/cert-renewer-ssh.timer <<EOT
-[Unit]
-Description=Step SSH renewer timer
-
-[Timer]
-OnBootSec=60
-OnUnitActiveSec=${SSH_RENEW_SEC}
-AccuracySec=1
-
-[Install]
-WantedBy=multi-user.target
-EOT
 
 sudo systemctl daemon-reload
