@@ -1,19 +1,42 @@
 frontend:
   podAnnotations:
-    autocert.step.sm/name: temporal
+    autocert.step.sm/name: temporal-frontend
     autocert.step.sm/duration: 720h
     autocert.step.sm/mode: "0600"
 history:
   podAnnotations:
-    autocert.step.sm/name: temporal
+    autocert.step.sm/name: temporal-frontend
     autocert.step.sm/duration: 720h
     autocert.step.sm/mode: "0600"
 server:
   podAnnotations:
-    autocert.step.sm/name: temporal
+    autocert.step.sm/name: temporal-frontend
     autocert.step.sm/duration: 720h
     autocert.step.sm/mode: "0600"
   config:
+    tls:
+      internode:
+        server:
+          certFile: /var/run/autocert.step.sm/site.crt
+          keyFile: /var/run/autocert.step.sm/site.key
+          requireClientAuth: true
+          clientCaFiles:
+            - /var/run/autocert.step.sm/root.crt
+        client:
+          serverName: temporal-frontend
+          rootCaFiles:
+            - /var/run/autocert.step.sm/root.crt
+      frontend:
+        server:
+          certFile: /var/run/autocert.step.sm/site.crt
+          keyFile: /var/run/autocert.step.sm/site.key
+          requireClientAuth: true
+          clientCaFiles:
+            - /var/run/autocert.step.sm/root.crt
+        client:
+          serverName: temporal-frontend
+          rootCaFiles:
+            - /var/run/autocert.step.sm/root.crt
     persistence:
       default:
         driver: "sql"
