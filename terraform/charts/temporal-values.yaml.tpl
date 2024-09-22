@@ -3,19 +3,17 @@
 frontend:
   podAnnotations:
     autocert.step.sm/name: temporal
-    autocert.step.sm/sans: temporal-frontend,127.0.0.1
+    autocert.step.sm/sans: temporal-frontend,temporal-frontend.temporal.svc,127.0.0.1
     autocert.step.sm/duration: 720h
     autocert.step.sm/mode: "0600"
 history:
   podAnnotations:
     autocert.step.sm/name: temporal
-    autocert.step.sm/sans: temporal-frontend,127.0.0.1
     autocert.step.sm/duration: 720h
     autocert.step.sm/mode: "0600"
 server:
   podAnnotations:
     autocert.step.sm/name: temporal
-    autocert.step.sm/sans: temporal-frontend,127.0.0.1
     autocert.step.sm/duration: 720h
     autocert.step.sm/mode: "0600"
   config:
@@ -125,9 +123,15 @@ schema:
 web:
   podAnnotations:
     autocert.step.sm/name: temporal
-    autocert.step.sm/sans: temporal-frontend,127.0.0.1
     autocert.step.sm/duration: 720h
     autocert.step.sm/mode: "0600"
+  additionalEnv:
+    - name: TEMPORAL_TLS_CERT
+      value: /var/run/autocert.step.sm/site.crt
+    - name: TEMPORAL_TLS_KEY
+      value: /var/run/autocert.step.sm/site.key
+    - name: TEMPORAL_TLS_CA
+      value: /var/run/autocert.step.sm/root.crt
   ingress:
     enabled: true
 
