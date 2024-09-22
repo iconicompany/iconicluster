@@ -3,7 +3,7 @@
 frontend:
   podAnnotations:
     autocert.step.sm/name: temporal
-    autocert.step.sm/sans: temporal-frontend,temporal-frontend.temporal.svc,127.0.0.1
+    autocert.step.sm/sans: temporal-frontend
     autocert.step.sm/duration: 720h
     autocert.step.sm/mode: "0600"
 history:
@@ -14,6 +14,7 @@ history:
 server:
   podAnnotations:
     autocert.step.sm/name: temporal
+    autocert.step.sm/sans: temporal-frontend
     autocert.step.sm/duration: 720h
     autocert.step.sm/mode: "0600"
   config:
