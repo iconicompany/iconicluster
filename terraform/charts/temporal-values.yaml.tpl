@@ -1,19 +1,21 @@
+# example https://github.com/temporalio/helm-charts/blob/main/charts/temporal/values.yaml
+
 frontend:
   podAnnotations:
     autocert.step.sm/name: temporal
-    autocert.step.sm/sans: temporal-frontend
+    autocert.step.sm/sans: temporal-frontend,127.0.0.1
     autocert.step.sm/duration: 720h
     autocert.step.sm/mode: "0600"
 history:
   podAnnotations:
     autocert.step.sm/name: temporal
-    autocert.step.sm/sans: temporal-frontend
+    autocert.step.sm/sans: temporal-frontend,127.0.0.1
     autocert.step.sm/duration: 720h
     autocert.step.sm/mode: "0600"
 server:
   podAnnotations:
     autocert.step.sm/name: temporal
-    autocert.step.sm/sans: temporal-frontend
+    autocert.step.sm/sans: temporal-frontend,127.0.0.1
     autocert.step.sm/duration: 720h
     autocert.step.sm/mode: "0600"
   config:
@@ -121,6 +123,11 @@ schema:
     enabled: false
 
 web:
+  podAnnotations:
+    autocert.step.sm/name: temporal
+    autocert.step.sm/sans: temporal-frontend,127.0.0.1
+    autocert.step.sm/duration: 720h
+    autocert.step.sm/mode: "0600"
   ingress:
     enabled: true
 
