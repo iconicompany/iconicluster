@@ -35,7 +35,8 @@ resource "helm_release" "temporal" {
 
   values = [
     templatefile("charts/temporal-values.yaml.tpl", {
-      DOMAIN = "${local.TEMPORAL_HOST}"
+      TEMPORAL_DOMAIN = "${local.TEMPORAL_HOST}"
+      DEX_DOMAIN = var.DEX_DOMAIN
       DB_HOST = "${terraform_data.postgresqlname[0].output}."
     })
   ]
@@ -50,6 +51,10 @@ resource "helm_release" "temporal" {
   set {
      name  = "elasticsearch.replicas"
      value = "1"
+  }
+  set_sensitive {
+    name  = "web.additionalEnv[0].value"
+     value = var.TEMPORAL_STATIC_CLIENT_SECRET
   }
   #set {
   #   name  = "prometheus.enabled"

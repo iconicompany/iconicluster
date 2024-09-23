@@ -1,6 +1,6 @@
 config:
   # Set it to a valid URL
-  issuer: http://${DEX_DOMAIN}
+  issuer: https://${DEX_DOMAIN}
 
   # See https://dexidp.io/docs/storage/ for more options
   storage:
@@ -14,7 +14,7 @@ config:
     id: github
     name: GitHub
     config:
-      redirectURI: http://${DEX_DOMAIN}/callback
+      redirectURI: https://${DEX_DOMAIN}/callback
       orgs:
       - name: iconicompany
         teams:
@@ -26,6 +26,10 @@ config:
     name: 'StepCA'
     redirectURIs:
     - 'http://127.0.0.1:9999'
+  - id: temporal
+    name: 'Temporal'
+    redirectURIs:
+    - 'https://${TEMPORAL_DOMAIN}/auth/sso/callback'
 ingress:
   enabled: true
 

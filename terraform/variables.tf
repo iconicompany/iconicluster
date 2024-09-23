@@ -133,6 +133,10 @@ variable "STEP_STATIC_CLIENT_SECRET" {
   description = "StepCA static client secret"
   type        = string
 }
+variable "TEMPORAL_STATIC_CLIENT_SECRET" {
+  description = "Teporal static client secret"
+  type        = string
+}
 
 variable "SSH_HOST_CA_FILE" {
   description = "StepCA host SSH CA"

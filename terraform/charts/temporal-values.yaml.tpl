@@ -41,6 +41,14 @@ server:
           serverName: temporal-frontend
           rootCaFiles:
             - /var/run/autocert.step.sm/root.crt
+    authorization:
+      jwtKeyProvider:
+        keySourceURIs:
+          - https://${DEX_DOMAIN}/keys
+        refreshInterval: 1m
+      permissionsClaimName: groups
+      authorizer: default
+      claimMapper: default
     persistence:
       default:
         driver: "sql"
@@ -127,6 +135,20 @@ web:
     autocert.step.sm/duration: 720h
     autocert.step.sm/mode: "0600"
   additionalEnv:
+    - name: TEMPORAL_AUTH_CLIENT_SECRET
+      value: "!!!set_sensitive!!!"
+    - name: TEMPORAL_AUTH_ENABLED
+      value: "true"
+    - name: TEMPORAL_AUTH_PROVIDER_URL
+      value: https://${DEX_DOMAIN}
+    - name: TEMPORAL_AUTH_ISSUER_URL
+      value: https://${DEX_DOMAIN}
+    - name: TEMPORAL_AUTH_CLIENT_ID
+      value: temporal
+    - name: TEMPORAL_AUTH_CALLBACK_URL
+      value: https://${TEMPORAL_DOMAIN}/auth/sso/callback
+    - name: TEMPORAL_AUTH_SCOPES
+      value: "openid,email,groups"
     - name: TEMPORAL_TLS_CERT
       value: /var/run/autocert.step.sm/site.crt
     - name: TEMPORAL_TLS_KEY
@@ -140,9 +162,9 @@ web:
       cert-manager.io/cluster-issuer: letsencrypt-prod
 
     hosts:
-      - ${DOMAIN}
+      - ${TEMPORAL_DOMAIN}
 
     tls:
       - hosts:
-          - ${DOMAIN}
-        secretName: ${DOMAIN}
+          - ${TEMPORAL_DOMAIN}
+        secretName: ${TEMPORAL_DOMAIN}
