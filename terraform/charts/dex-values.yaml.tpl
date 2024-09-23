@@ -17,10 +17,11 @@ config:
       redirectURI: https://${DEX_DOMAIN}/callback
       orgs:
       - name: iconicompany
-        teams:
-        - devops
+#        teams:
+#        - devops
       loadAllGroups: false
       useLoginAsID: false
+      preferredEmailDomain: "iconicompany.com"
   staticClients:
   - id: step-ca
     name: 'StepCA'
