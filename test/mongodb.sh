@@ -1,0 +1,1 @@
+mongosh --tls --tlsCertificateKeyFile ~/.step/certs/my.pem     --tlsCAFile ~/.step/certs/root_ca.crt     --authenticationDatabase '$external'     --authenticationMechanism MONGODB-X509  mongodb01.kube01.icncd.ru/test --eval "printjson(db.serverStatus())"
