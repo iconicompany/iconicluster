@@ -8,7 +8,7 @@ save to `$HOME/.kube/config`, change `${USER}` to yourself:
 Command line:
 `curl -L https://github.com/iconicompany/iconicluster/raw/main/examples/config|envsubst > $HOME/.kube/config`
 
-3. Set Primary email address at https://github.com/settings/emails to corporate (@iconicompany.com)
+3. Add email MY-LOGIN@iconicompany.com to https://github.com/settings/emails
 4. Get certificate `curl -L https://github.com/iconicompany/iconicluster/raw/main/step-ca/install/step-cli-user.sh | bash -`
 
 5. Connect to k8s via k9s
