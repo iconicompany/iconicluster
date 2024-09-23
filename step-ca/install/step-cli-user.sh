@@ -23,11 +23,11 @@ umask 077
 CN=${1:-${USER}}
 CERT_LOCATION=${STEPCERTPATH}/my.crt
 KEY_LOCATION=${STEPCERTPATH}/my.key
+KEY_LOCATION_PK8=${STEPCERTPATH}/my.pk8
 PEM_LOCATION=${STEPCERTPATH}/my.pem
 PGCERTPATH=/home/${CN}/.postgresql
 CERT_LOCATION_PG=${PGCERTPATH}/postgresql.crt
 KEY_LOCATION_PG=${PGCERTPATH}/postgresql.key
-KEY_LOCATION_PGPK8=${PGCERTPATH}/postgresql.pk8
 CA_LOCATION=${STEPPATH}/certs/root_ca.crt
 CA_LOCATION_PG=${PGCERTPATH}/root.crt
 
@@ -41,5 +41,5 @@ ln -vfs ${CERT_LOCATION} ${CERT_LOCATION_PG}
 ln -vfs ${CA_LOCATION} ${CA_LOCATION_PG}
 cat ${CERT_LOCATION} ${KEY_LOCATION} > ${PEM_LOCATION}
 
-# required for DBeaver client
-openssl pkcs8 -topk8 -v1 PBE-SHA1-3DES -nocrypt -inform PEM -outform DER -in $KEY_LOCATION_PG -out $KEY_LOCATION_PGPK8
+# required for java (DBeaver/temporal java/etc)
+openssl pkcs8 -topk8 -nocrypt -in $KEY_LOCATION -out $KEY_LOCATION_PK8
