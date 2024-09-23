@@ -63,3 +63,8 @@ data "rustack_firewall_template" "temporal" {
   vdc_id = data.rustack_vdc.iconicvdc.id
   name   = "temporal"
 }
+
+data "rustack_firewall_template" "redis" {
+  vdc_id = data.rustack_vdc.iconicvdc.id
+  name   = "redis"
+}

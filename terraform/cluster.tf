@@ -20,6 +20,7 @@ resource "rustack_port" "cluster_port" {
     data.rustack_firewall_template.kubeapi.id,
     data.rustack_firewall_template.postgresql.id,
     data.rustack_firewall_template.mongodb.id,
+    data.rustack_firewall_template.redis.id,
     data.rustack_firewall_template.temporal.id
   ]
 }
