@@ -101,7 +101,7 @@ resource "helm_release" "dex" {
 
 resource "rustack_dns_record" "pgadmin4_dns_record" {
   count  = var.SERVERS_NUM
-  dns_id = resource.rustack_dns.cluster_dns.id
+  dns_id = data.rustack_dns.cluster_dns.id
   type   = "CNAME"
   host   = "pgadmin4.${local.CLUSTER_NAME}."
   data   = "${local.CLUSTER_NAME}."

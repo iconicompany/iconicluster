@@ -3,7 +3,7 @@ locals {
 }
 resource "rustack_dns_record" "temporal_dns_record" {
   count  = var.SERVERS_NUM
-  dns_id = resource.rustack_dns.cluster_dns.id
+  dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${local.TEMPORAL_HOST}."
   data   = resource.rustack_vm.cluster[count.index].floating_ip
