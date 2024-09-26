@@ -9,6 +9,7 @@ export STEP_PROVISIONER=${STEP_PROVISIONER:-services}
 if [ "$1" == "" ] ; then
     echo "ERROR: No cn or service given"
     echo "USAGE: $0 <cn> [<service>]"
+    echo "EXAMPLE: $0 -u postgres postgresql01"
     exit 1
 fi
 
@@ -17,7 +18,7 @@ fi
 optstring=":u:g:m:"
 
 GROUP=
-MODE=0640
+MODE=0600
 # assign arguments to variables
 while getopts ${optstring} arg; do
   case "${arg}" in
