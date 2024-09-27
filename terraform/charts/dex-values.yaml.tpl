@@ -31,6 +31,10 @@ config:
     name: 'Temporal'
     redirectURIs:
     - 'https://${TEMPORAL_DOMAIN}/auth/sso/callback'
+  - id: outline
+    name: 'Outline'
+    redirectURIs:
+    - 'https://${OUTLINE_DOMAIN}/auth/oidc.callback'
 ingress:
   enabled: true
 

@@ -231,3 +231,12 @@ variable "PGADMIN4_PASSWORD" {
   description = "PGADMIN4_PASSWORD"
   type        = string
 }
+
+variable "OUTLINE_CLIENT_SECRET" {
+  description = "OUTLINE_CLIENT_SECRET for DEX IPD"
+  type        = string
+}
+variable "OUTLINE_DOMAIN" {
+  description = "OUTLINE_DOMAIN, e.g docs.example.com"
+  type        = string
+}
