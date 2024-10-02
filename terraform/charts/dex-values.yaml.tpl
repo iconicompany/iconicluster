@@ -4,7 +4,17 @@ config:
 
   # See https://dexidp.io/docs/storage/ for more options
   storage:
-    type: memory
+    type: postgres
+    config:
+      host: ${DB_HOST}
+      port: 5432
+      database: ${DB_NAME}
+      user: ${DB_USER}
+      ssl:
+        mode: verify-ca
+        caFile: "/var/run/autocert.step.sm/root.crt"
+        certFile: "/var/run/autocert.step.sm/site.crt"
+        keyFile: "/var/run/autocert.step.sm/site.key"
 
   # Enable at least one connector
   # See https://dexidp.io/docs/connectors/ for more options
@@ -17,8 +27,6 @@ config:
       redirectURI: https://${DEX_DOMAIN}/callback
       orgs:
       - name: iconicompany
-#        teams:
-#        - devops
       loadAllGroups: false
       useLoginAsID: false
       preferredEmailDomain: "iconicompany.com"
@@ -51,3 +59,8 @@ ingress:
     - hosts:
         - ${DEX_DOMAIN}
       secretName: ${DEX_DOMAIN}
+podAnnotations:
+  autocert.step.sm/name: ${DB_USER}
+  autocert.step.sm/duration: 720h
+  autocert.step.sm/owner: "1001:1001"
+  autocert.step.sm/mode: "0600"
