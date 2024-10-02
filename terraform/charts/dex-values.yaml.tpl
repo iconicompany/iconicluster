@@ -27,6 +27,7 @@ config:
       redirectURI: https://${DEX_DOMAIN}/callback
       orgs:
       - name: iconicompany
+      - name: ilb
       loadAllGroups: false
       useLoginAsID: false
       preferredEmailDomain: "iconicompany.com"
