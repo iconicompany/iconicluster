@@ -240,3 +240,8 @@ variable "OUTLINE_DOMAIN" {
   description = "OUTLINE_DOMAIN, e.g docs.example.com"
   type        = string
 }
+
+variable "IMARKETPLACE_CLIENT_SECRET" {
+  description = "IMARKETPLACE_CLIENT_SECRET for DEX IPD"
+  type        = string
+}
