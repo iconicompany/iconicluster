@@ -32,6 +32,11 @@ CA_LOCATION=${STEPPATH}/certs/root_ca.crt
 CA_LOCATION_PG=${PGCERTPATH}/root.crt
 
 mkdir -p $STEPCERTPATH $PGCERTPATH
+export STEP_TOKEN=$(step oauth --bare --oidc \
+        --client-id step-ca --client-secret step-ca-secret \
+        --provider https://id.iconicompany.com \
+        --listen 127.0.0.1:9999 \
+        --scope openid --scope groups --scope email --scope profile)
 step ca certificate $CN ${CERT_LOCATION} ${KEY_LOCATION}  --force
 step certificate inspect ${CERT_LOCATION}
 
