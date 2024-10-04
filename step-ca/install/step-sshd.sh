@@ -18,7 +18,7 @@ EOT
 
 echo ${SSH_HOST_CA} |sudo tee ${STEPPATH}/certs/ssh_host_ca_key.pub
 echo ${SSH_USER_CA} |sudo tee ${STEPPATH}/certs/ssh_user_ca_key.pub
-sudo systemctl restart ssh
+sudo systemctl restart ssh || sudo systemctl restart sshd
 
 
 WORK_DIR=`mktemp -d `
