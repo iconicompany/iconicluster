@@ -1,5 +1,5 @@
 export STEPPATH=${STEPPATH:-/etc/step-ca}
-export STEP_PROVISIONER=${STEP_PROVISIONER:-users}
+export STEP_PROVISIONER=${STEP_PROVISIONER:-services}
 
 export SSH_HOSTNAME=${SSH_HOSTNAME:-$(hostname -f)}
 export SSH_HOST_CA=${SSH_HOST_CA:-"ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHolgfookuqPgHKA8zZSiozDA35BEWD1CgmRLRImoeVsOtZVgT0dWicyLzZyTo3WfcUhwXQsNftggPjmy3TBU+k="}
