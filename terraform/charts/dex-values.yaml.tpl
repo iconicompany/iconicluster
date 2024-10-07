@@ -18,7 +18,7 @@ config:
 
   # Enable at least one connector
   # See https://dexidp.io/docs/connectors/ for more options
-  enablePasswordDB: true
+#  enablePasswordDB: true
   connectors:
   - type: github
     id: github
@@ -31,14 +31,14 @@ config:
       loadAllGroups: false
       useLoginAsID: false
       preferredEmailDomain: "iconicompany.com"
-  - type: oauth
-    id: hh
-    name: HeadHunter
-    config:
-      authorizationURL: https://hh.ru/oauth/authorize
-      tokenURL: https://hh.ru/oauth/token
-      userInfoURL: https://api.hh.ru/me
-      redirectURI: https://${DEX_DOMAIN}/callback
+#  - type: oauth
+#    id: hh
+#    name: HeadHunter
+#    config:
+#      authorizationURL: https://hh.ru/oauth/authorize
+#      tokenURL: https://hh.ru/oauth/token
+#      userInfoURL: https://api.hh.ru/me
+#      redirectURI: https://${DEX_DOMAIN}/callback
   staticClients:
   - id: step-ca
     name: 'StepCA'
