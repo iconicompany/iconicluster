@@ -41,6 +41,15 @@ resource "helm_release" "dex" {
     value = var.GITHUB_CLIENT_SECRET
   }
   set_sensitive {
+    name  = "config.connectors[1].config.clientID"
+    value = var.HH_CLIENT_ID
+  }
+  set_sensitive {
+    name  = "config.connectors[1].config.clientSecret"
+    value = var.HH_CLIENT_SECRET
+  }
+
+  set_sensitive {
     name  = "config.staticClients[1].secret"
     value = var.TEMPORAL_STATIC_CLIENT_SECRET
   }

@@ -211,15 +211,24 @@ variable "DEX_DOMAIN" {
   type        = string
 }
 variable "GITHUB_CLIENT_ID" {
-  description = "GITHUB_CLIENT_ID for DEX IPD"
+  description = "GITHUB_CLIENT_ID for DEX IDP"
   type        = string
 }
 
 variable "GITHUB_CLIENT_SECRET" {
-  description = "GITHUB_CLIENT_SECRET for DEX IPD"
+  description = "GITHUB_CLIENT_SECRET for DEX IDP"
   type        = string
 }
 
+variable "HH_CLIENT_ID" {
+  description = "HH_CLIENT_ID for DEX IDP"
+  type        = string
+}
+
+variable "HH_CLIENT_SECRET" {
+  description = "HH_CLIENT_SECRET for DEX IDP"
+  type        = string
+}
 
 variable "PGADMIN4_EMAIL" {
   description = "PGADMIN4_EMAIL"
@@ -233,7 +242,7 @@ variable "PGADMIN4_PASSWORD" {
 }
 
 variable "OUTLINE_CLIENT_SECRET" {
-  description = "OUTLINE_CLIENT_SECRET for DEX IPD"
+  description = "OUTLINE_CLIENT_SECRET for DEX IDP"
   type        = string
 }
 variable "OUTLINE_DOMAIN" {
@@ -242,6 +251,6 @@ variable "OUTLINE_DOMAIN" {
 }
 
 variable "IMARKETPLACE_CLIENT_SECRET" {
-  description = "IMARKETPLACE_CLIENT_SECRET for DEX IPD"
+  description = "IMARKETPLACE_CLIENT_SECRET for DEX IDP"
   type        = string
 }

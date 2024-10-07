@@ -31,6 +31,11 @@ config:
       loadAllGroups: false
       useLoginAsID: false
       preferredEmailDomain: "iconicompany.com"
+  - type: hh
+    id: hh
+    name: HeadHunter
+    config:
+      redirectURI: https://${DEX_DOMAIN}/callback
   staticClients:
   - id: step-ca
     name: 'StepCA'
