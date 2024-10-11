@@ -4,7 +4,7 @@
 1. Добавьте электронную почту **MY-LOGIN@iconicompany.com** на https://github.com/settings/emails.
 2. **Получите сертификат** `curl -L https://github.com/iconicompany/iconicluster/raw/main/step-ca/install/step-cli-user.sh | bash -`.
 3. Конфигурация для подключения к кластеру
-Сохраните [config]([url](https://github.com/iconicompany/iconicluster/blob/main/examples/config)) 
+Сохраните [config](https://github.com/iconicompany/iconicluster/blob/main/examples/config)) 
 в `$HOME/.kube/config`, измените `${USER}` на себя. **Можно сделать командой:**
 `curl -L https://github.com/iconicompany/iconicluster/raw/main/examples/config|envsubst > $HOME/.kube/config`.
 4. Подключитесь к k8s через k9s
