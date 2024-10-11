@@ -1,7 +1,7 @@
 locals {
   CLUSTER_NAME   = "kube01.${var.CLUSTER_TLD}"
   CLUSTER_HOST   = "kube01.${var.CLUSTER_TLD}:6443"
-  CLUSTER_DOMAIN = "cluster.${local.CLUSTER_NAME}"
+  CLUSTER_DOMAIN = "cluster.local"
 }
 
 # Создание порта сервера (шаг 9)
