@@ -1,4 +1,6 @@
-
+locals {
+  CLUSTER_DOMAIN = "cluster.local"
+}
 module "k3s" {
   source = "github.com/iconicompany/terraform-module-k3s"
 
