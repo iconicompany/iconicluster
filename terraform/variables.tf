@@ -35,12 +35,6 @@ variable "CLUSTER_SERVER" {
       ram  = 16
       disk = 160
       power = true
-    },
-    {
-      cpu  = 2
-      ram  = 2
-      disk = 60
-      power = true
     }
   ]
 }
