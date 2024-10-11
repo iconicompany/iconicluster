@@ -31,7 +31,6 @@ if ! command -v step > /dev/null; then
         rm -f $deb
     fi
 fi
-set -e
 
 STEPPATH=$(step path)
 export STEPCERTPATH=${STEPPATH}/certs
