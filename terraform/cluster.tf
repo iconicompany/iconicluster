@@ -108,7 +108,7 @@ resource "rustack_dns_record" "any_cluster_record" {
 
 
 data "rustack_dns" "cluster_dns2" {
-  name       = "icncd.dev."
+  name       = "${var.CLUSTER_TLD2}."
   project_id = data.rustack_project.iconicproject.id
 }
 
@@ -116,6 +116,6 @@ resource "rustack_dns_record" "any_cluster_record2" {
   count  = var.SERVERS_NUM > 0 ? 1 : 0
   dns_id = data.rustack_dns.cluster_dns2.id
   type   = "A"
-  host   = "*.icncd.dev."
+  host   = "*.${var.CLUSTER_TLD2}."
   data   = resource.rustack_vm.cluster[0].floating_ip
 }
