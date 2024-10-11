@@ -253,3 +253,8 @@ variable "IMARKETPLACE_CLIENT_SECRET" {
   description = "IMARKETPLACE_CLIENT_SECRET for DEX IDP"
   type        = string
 }
+
+variable "ADD_DOMAIN" {
+  type    = list(string)
+  default = []
+}
