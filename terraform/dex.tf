@@ -21,7 +21,7 @@ resource "helm_release" "dex" {
       DB_HOST         = terraform_data.postgresqlname[0].output
       DB_NAME         = postgresql_database.dex.name
       DB_USER         = postgresql_role.dex.name
-      TEMPORAL_DOMAIN = "${local.TEMPORAL_HOST}"
+      TEMPORAL_DOMAIN = "${local.TEMPORAL_DOMAIN}"
       OUTLINE_DOMAIN  = var.OUTLINE_DOMAIN
       # GITHUB_CLIENT_ID     = var.GITHUB_CLIENT_ID
       # GITHUB_CLIENT_SECRET = var.GITHUB_CLIENT_SECRET

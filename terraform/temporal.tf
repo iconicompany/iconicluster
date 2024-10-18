@@ -1,11 +1,11 @@
 locals {
-  TEMPORAL_HOST   =  "temporal.${local.CLUSTER_NAME}"
+  TEMPORAL_DOMAIN   =  "temporal.${local.CLUSTER_NAME}"
 }
 resource "rustack_dns_record" "temporal_dns_record" {
   count  = var.SERVERS_NUM
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
-  host   = "${local.TEMPORAL_HOST}."
+  host   = "${local.TEMPORAL_DOMAIN}."
   data   = resource.rustack_vm.cluster[count.index].floating_ip
 }
 resource "postgresql_role" "temporal" {
@@ -13,6 +13,24 @@ resource "postgresql_role" "temporal" {
   name  = "temporal"
   login = true
   create_database = true
+}
+
+
+resource "postgresql_database" "temporal" {
+  name              = "temporal"
+  owner             = postgresql_role.temporal.name
+  lc_collate        = "C"
+  connection_limit  = -1
+  allow_connections = true
+}
+
+
+resource "postgresql_database" "temporal_visibility" {
+  name              = "temporal_visibility"
+  owner             = postgresql_role.temporal.name
+  lc_collate        = "C"
+  connection_limit  = -1
+  allow_connections = true
 }
 
 resource "kubernetes_namespace" "temporal" {
@@ -35,9 +53,11 @@ resource "helm_release" "temporal" {
 
   values = [
     templatefile("charts/temporal-values.yaml.tpl", {
-      TEMPORAL_DOMAIN = "${local.TEMPORAL_HOST}"
+      TEMPORAL_DOMAIN = "${local.TEMPORAL_DOMAIN}"
       DEX_DOMAIN = var.DEX_DOMAIN
       DB_HOST = "${terraform_data.postgresqlname[0].output}."
+      DB_NAME = postgresql_database.temporal.name
+      DB_VISIBILITY_NAME = postgresql_database.temporal_visibility.name
     })
   ]
   set {

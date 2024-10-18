@@ -1,5 +1,4 @@
 # example https://github.com/temporalio/helm-charts/blob/main/charts/temporal/values.yaml
-
 frontend:
   podAnnotations:
     autocert.step.sm/name: temporal
@@ -56,7 +55,7 @@ server:
           driver: "postgres12"
           host: ${DB_HOST}
           port: 5432
-          database: temporal
+          database: ${DB_NAME}
           #user: _USERNAME_
           #password: _PASSWORD_
           # for a production deployment use this instead of `password` and provision the secret beforehand e.g. with a sealed secret
@@ -79,7 +78,7 @@ server:
           driver: "postgres12"
           host: ${DB_HOST}
           port: 5432
-          database: temporal_visibility
+          database: ${DB_VISIBILITY_NAME}
           #user: _USERNAME_
           #password: _PASSWORD_
           # for a production deployment use this instead of `password` and provision the secret beforehand e.g. with a sealed secret
