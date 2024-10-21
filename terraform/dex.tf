@@ -57,11 +57,6 @@ resource "helm_release" "dex" {
     name  = "config.staticClients[2].secret"
     value = var.OUTLINE_CLIENT_SECRET
   }
-  set_sensitive {
-    name  = "config.staticClients[3].secret"
-    value = var.IMARKETPLACE_CLIENT_SECRET
-  }
-
 }
 
 resource "postgresql_role" "dex" {

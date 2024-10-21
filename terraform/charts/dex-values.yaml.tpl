@@ -52,13 +52,6 @@ config:
     name: 'Outline'
     redirectURIs:
     - 'https://${OUTLINE_DOMAIN}/auth/oidc.callback'
-  - id: imarketplace
-    name: 'imarketplace'
-    redirectURIs:
-    - 'https://iconicompany.com/api/auth/callback/dex'
-    - 'https://iconicompany.ru/api/auth/callback/dex'
-    - 'https://imarketplace-main.iconicompany.icncd.ru/api/auth/callback/dex'
-    - 'https://imarketplace-main.iconicompany.icncd.dev/api/auth/callback/dex'
 ingress:
   enabled: true
 
