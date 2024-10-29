@@ -28,5 +28,5 @@ curl -LO https://github.com/iconicompany/iconicluster/raw/main/step-ca/systemd/c
 sudo mv -v cert-renewer-ssh.service cert-renewer-ssh.timer /etc/systemd/system/
 rm -rf ${WORK_DIR}
 
-
 sudo systemctl daemon-reload
+sudo systemctl enable --now cert-renewer-ssh.timer
