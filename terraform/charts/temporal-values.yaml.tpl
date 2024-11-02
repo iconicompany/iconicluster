@@ -57,13 +57,13 @@ server:
           rootCaFiles:
             - /var/run/autocert.step.sm/root.crt
     authorization:
-      jwtKeyProvider:
-        keySourceURIs:
-          - https://${DEX_DOMAIN}/keys
-        refreshInterval: 1m
-      permissionsClaimName: groups
-      authorizer: default
-      claimMapper: default
+      #jwtKeyProvider:
+      #    keySourceURIs:
+      #      - https://${DEX_DOMAIN}/keys
+      #    refreshInterval: 1m
+      #permissionsClaimName: groups
+      #authorizer: default
+      #claimMapper: default
     persistence:
       default:
         driver: "sql"
