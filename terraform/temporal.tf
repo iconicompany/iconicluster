@@ -13,6 +13,7 @@ resource "postgresql_role" "temporal" {
   name  = "temporal"
   login = true
   create_database = true
+  # password = var.TEMPORAL_DB_PASSWORD
 }
 
 
@@ -42,6 +43,15 @@ resource "kubernetes_namespace" "temporal" {
     name = "temporal"
   }
 }
+# resource "kubernetes_secret" "temporal" {
+#   metadata {
+#     name = "temporal-secret"
+#     namespace        = kubernetes_namespace.temporal.metadata[0].name
+#   }
+#   data = {
+#     password = var.TEMPORAL_DB_PASSWORD
+#   }
+# }
 resource "helm_release" "temporal" {
   #count = 0
   depends_on       = [null_resource.k3s_finalize]
@@ -58,10 +68,11 @@ resource "helm_release" "temporal" {
       DB_NAME = postgresql_database.temporal.name
       DB_VISIBILITY_NAME = postgresql_database.temporal_visibility.name
     })
+      # DB_SECRET_NAME = kubernetes_secret.temporal.metadata[0].name
   ]
   set_sensitive {
     name  = "web.additionalEnv[0].value"
-     value = var.TEMPORAL_STATIC_CLIENT_SECRET
+    value = var.TEMPORAL_STATIC_CLIENT_SECRET
   }
 }
 

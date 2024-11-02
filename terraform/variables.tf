@@ -136,6 +136,10 @@ variable "TEMPORAL_STATIC_CLIENT_SECRET" {
   description = "Teporal static client secret"
   type        = string
 }
+variable "TEMPORAL_DB_PASSWORD" {
+  description = "Teporal DB password"
+  type        = string
+}
 
 variable "SSH_HOST_CA_FILE" {
   description = "StepCA host SSH CA"

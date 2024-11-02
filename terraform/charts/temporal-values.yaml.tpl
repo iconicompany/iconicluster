@@ -21,7 +21,7 @@ schema:
     autocert.step.sm/duration: 720h
     autocert.step.sm/mode: "u=rw,go="
   createDatabase:
-    enabled: true
+    enabled: false
   setup:
     enabled: false
   update:
@@ -72,13 +72,14 @@ server:
           host: ${DB_HOST}
           port: 5432
           database: ${DB_NAME}
-          #user: _USERNAME_
+          #user: temporal
           #password: _PASSWORD_
           # for a production deployment use this instead of `password` and provision the secret beforehand e.g. with a sealed secret
           # it has a single key called `password`
-          # existingSecret: temporal-default-store
+          #existingSecret: {DB_SECRET_NAME}
           maxConns: 20
           maxConnLifetime: "1h"
+          # certificate auth not working in schema creation due to init containers https://github.com/smallstep/autocert/issues/279
           tls:
             enabled: true
             enableHostVerification: true
@@ -95,11 +96,11 @@ server:
           host: ${DB_HOST}
           port: 5432
           database: ${DB_VISIBILITY_NAME}
-          #user: _USERNAME_
+          #user: temporal
           #password: _PASSWORD_
           # for a production deployment use this instead of `password` and provision the secret beforehand e.g. with a sealed secret
           # it has a single key called `password`
-          # existingSecret: temporal-visibility-store
+          #existingSecret: {DB_SECRET_NAME}
           maxConns: 20
           maxConnLifetime: "1h"
           tls:
