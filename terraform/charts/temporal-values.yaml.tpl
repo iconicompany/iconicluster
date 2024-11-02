@@ -4,18 +4,34 @@ frontend:
     autocert.step.sm/name: temporal
     autocert.step.sm/sans: temporal-frontend
     autocert.step.sm/duration: 720h
-    autocert.step.sm/mode: "0600"
+    autocert.step.sm/mode: "u=rw,go="
 history:
   podAnnotations:
     autocert.step.sm/name: temporal
     autocert.step.sm/duration: 720h
-    autocert.step.sm/mode: "0600"
+    autocert.step.sm/mode: "u=rw,go="
+admintools:
+  podAnnotations:
+    autocert.step.sm/name: temporal
+    autocert.step.sm/duration: 720h
+    autocert.step.sm/mode: "u=rw,go="
+schema:
+  podAnnotations:
+    autocert.step.sm/name: temporal
+    autocert.step.sm/duration: 720h
+    autocert.step.sm/mode: "u=rw,go="
+  createDatabase:
+    enabled: true
+  setup:
+    enabled: false
+  update:
+    enabled: false
 server:
   podAnnotations:
     autocert.step.sm/name: temporal
     autocert.step.sm/sans: temporal-frontend
     autocert.step.sm/duration: 720h
-    autocert.step.sm/mode: "0600"
+    autocert.step.sm/mode: "u=rw,go="
   config:
     tls:
       internode:
@@ -116,23 +132,15 @@ prometheus:
 
 grafana:
   enabled: true
-  
+
 elasticsearch:
   enabled: false
-
-schema:
-  createDatabase:
-    enabled: true
-  setup:
-    enabled: false
-  update:
-    enabled: false
 
 web:
   podAnnotations:
     autocert.step.sm/name: temporal
     autocert.step.sm/duration: 720h
-    autocert.step.sm/mode: "0600"
+    autocert.step.sm/mode: "u=rw,go="
   additionalEnv:
     - name: TEMPORAL_AUTH_CLIENT_SECRET
       value: "!!!set_sensitive!!!"
