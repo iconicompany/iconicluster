@@ -83,34 +83,34 @@ resource "rustack_dns_record" "pgadmin4_dns_record" {
 #   }
 # }
 
-resource "helm_release" "pgadmin4" {
-  name             = "pgadmin4"
-  repository       = "https://helm.runix.net"
-  chart            = "pgadmin4"
-  namespace        = "pgadmin4"
-  create_namespace = true
-
-  values = [
-    templatefile("charts/pgadmin4-values.yaml.tpl", {
-      DOMAIN = "pgadmin4.${local.CLUSTER_NAME}"
-    })
-  ]
-  set_sensitive {
-    name  = "env.email"
-    value = var.PGADMIN4_EMAIL
-  }
-  set_sensitive {
-    name  = "env.password"
-    value = var.PGADMIN4_PASSWORD
-  }
-}
-resource "kubernetes_labels" "pgadmin4" {
-  api_version = "v1"
-  kind        = "Namespace"
-  metadata {
-    name = "pgadmin4"
-  }
-  labels = {
-    "autocert.step.sm" = "enabled"
-  }
-}
+#resource "helm_release" "pgadmin4" {
+#  name             = "pgadmin4"
+#  repository       = "https://helm.runix.net"
+#  chart            = "pgadmin4"
+#  namespace        = "pgadmin4"
+#  create_namespace = true
+#
+#  values = [
+#    templatefile("charts/pgadmin4-values.yaml.tpl", {
+#      DOMAIN = "pgadmin4.${local.CLUSTER_NAME}"
+#    })
+#  ]
+#  set_sensitive {
+#    name  = "env.email"
+#    value = var.PGADMIN4_EMAIL
+#  }
+#  set_sensitive {
+#    name  = "env.password"
+#    value = var.PGADMIN4_PASSWORD
+#  }
+#}
+#resource "kubernetes_labels" "pgadmin4" {
+#  api_version = "v1"
+#  kind        = "Namespace"
+#  metadata {
+#    name = "pgadmin4"
+#  }
+#  labels = {
+#    "autocert.step.sm" = "enabled"
+#  }
+#}

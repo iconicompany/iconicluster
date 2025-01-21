@@ -35,6 +35,12 @@ variable "CLUSTER_SERVER" {
       ram  = 16
       disk = 160
       power = true
+    },
+    {
+      cpu  = 4
+      ram  = 8
+      disk = 80
+      power = true
     }
   ]
 }
@@ -97,7 +103,7 @@ variable "STEP_FINGERPRINT" {
 variable "STEP_PROVISIONER" {
   description = "StepCA provisioner name"
   type        = string
-  default     = "users"
+  default     = "userspw"
 }
 
 variable "STEP_PASSWORD_FILE" {

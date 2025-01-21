@@ -1,4 +1,4 @@
-apk add shadow-useradd
+apk add openssl-util shadow-useradd
 
 useradd --user-group --system --create-home \
 --home-dir /etc/step-ca \
