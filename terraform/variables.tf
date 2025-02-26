@@ -208,6 +208,10 @@ variable "CLIENT_KEY" {
   description = "Path to PEM-encoded client certificate key for TLS authentication"
   type        = string
 }
+variable "POSTGRESQL_NUM" {
+  description = "Number of control plane nodes."
+  default     = 1
+}
 
 variable "POSTGRESQL_HOST" {
   description = "database server host for k3s"

@@ -1,10 +1,10 @@
 resource "terraform_data" "postgresqlname" {
-  count = var.SERVERS_NUM
+  count = var.POSTGRESQL_NUM
   input = "postgresql0${count.index+1}.${local.CLUSTER_NAME}"
 }
 
 resource "rustack_dns_record" "postgresql_dns_record" {
-  count  = var.SERVERS_NUM
+  count  = var.POSTGRESQL_NUM
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${terraform_data.postgresqlname[count.index].output}."
@@ -14,7 +14,7 @@ resource "rustack_dns_record" "postgresql_dns_record" {
 
 # install postgresql server
 resource "null_resource" "postgresql_server" {
-  count = var.SERVERS_NUM
+  count = var.POSTGRESQL_NUM
   triggers = {
     vm_id = rustack_vm.cluster[count.index].id
   }
@@ -31,7 +31,7 @@ resource "null_resource" "postgresql_server" {
 
 # generate token for DB client certificate
 data "external" "step_postgresql_token" {
-  count   = var.SERVERS_NUM
+  count   = var.POSTGRESQL_NUM
   program = ["bash", "${path.module}/step-ca-token.sh"]
 
   query = {
@@ -44,7 +44,7 @@ data "external" "step_postgresql_token" {
 
 # generate DB client certificate
 resource "null_resource" "step_postgresql" {
-  count      = var.SERVERS_NUM
+  count      = var.POSTGRESQL_NUM
   depends_on = [null_resource.step_cli, null_resource.postgresql_server]
   triggers = {
     vm_id = rustack_vm.cluster[count.index].id
