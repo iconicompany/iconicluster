@@ -23,7 +23,7 @@ module "k3s" {
   ]
 
   servers = {
-    for i in range(length(rustack_vm.cluster)) :
+    for i in range(var.SERVERS_NUM) :
     i => {
       ip = rustack_port.cluster_port[i].ip_address
       name = rustack_vm.cluster[i].name
@@ -36,9 +36,27 @@ module "k3s" {
         "--datastore-cafile=\"${pathexpand(var.CLUSTER_CA_CERTIFICATE)}\"",
         "--datastore-certfile=\"${var.STEPCERTPATH}/k3s.crt\"",
         "--datastore-keyfile=\"${var.STEPCERTPATH}/k3s.key\""
-
       ]
       annotations = { "server_id" : i } // theses annotations will not be managed by this module
+    }
+  }
+  agents = {
+    for i in range(var.AGENTS_NUM) :
+    i => {
+      ip = rustack_port.agent_port[i].ip_address
+      name = rustack_vm.agent[i].name
+      connection = {
+        host = rustack_vm.agent[i].floating_ip
+        user = var.USER_LOGIN
+      }
+      #flags = [
+      #  "--datastore-endpoint=\"postgres://${var.K3S_DB_USER}@${var.POSTGRESQL_HOST}:${var.K3S_DB_PORT}/${postgresql_database.k3s.name}\"",
+      #  "--datastore-cafile=\"${pathexpand(var.CLUSTER_CA_CERTIFICATE)}\"",
+      #  "--datastore-certfile=\"${var.STEPCERTPATH}/k3s.crt\"",
+      #  "--datastore-keyfile=\"${var.STEPCERTPATH}/k3s.key\""
+      #]
+      # labels = { "node.kubernetes.io/pool" = hcloud_server.agents[i].labels.nodepool }
+      # taints = { "dedicated" : hcloud_server.agents[i].labels.nodepool == "gpu" ? "gpu:NoSchedule" : null }
     }
   }
 

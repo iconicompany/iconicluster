@@ -65,13 +65,13 @@ resource "helm_release" "smallstep-autocert" {
 }
 
 
-resource "rustack_dns_record" "pgadmin4_dns_record" {
-  count  = var.SERVERS_NUM
-  dns_id = data.rustack_dns.cluster_dns.id
-  type   = "CNAME"
-  host   = "pgadmin4.${local.CLUSTER_NAME}."
-  data   = "${local.CLUSTER_NAME}."
-}
+#resource "rustack_dns_record" "pgadmin4_dns_record" {
+#  count  = var.SERVERS_NUM
+#  dns_id = data.rustack_dns.cluster_dns.id
+#  type   = "CNAME"
+#  host   = "pgadmin4.${local.CLUSTER_NAME}."
+#  data   = "${local.CLUSTER_NAME}."
+#}
 
 # resource "kubernetes_namespace" "pgadmin4" {
 #   metadata {

@@ -35,7 +35,17 @@ variable "CLUSTER_SERVER" {
       ram  = 16
       disk = 160
       power = true
-    },
+    }
+  ]
+}
+variable "AGENT_SERVER" {
+  type = list(object({
+    cpu  = number
+    ram  = number
+    disk = number
+    power = bool
+  }))
+  default = [
     {
       cpu  = 4
       ram  = 8
@@ -44,6 +54,7 @@ variable "CLUSTER_SERVER" {
     }
   ]
 }
+
 variable "CLUSTER_TLD" {
   description = "Cluster top level domain name, e.g example.com"
   type        = string
@@ -66,6 +77,12 @@ variable "AGENTS_NUM" {
 
 variable "CLUSTER_POWER" {
   description = "Cluster power switch"
+  type        = bool
+  default     = true
+}
+
+variable "AGENT_POWER" {
+  description = "Agents power switch"
   type        = bool
   default     = true
 }
