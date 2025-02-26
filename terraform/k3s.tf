@@ -17,9 +17,6 @@ module "k3s" {
   managed_fields           = ["label", "taint"] // ignore annotations
   use_sudo                 = true
   global_flags = [
-    "--disable=traefik",
-    "--secrets-encryption",
-    "--tls-san ${local.CLUSTER_NAME}"
   ]
 
   servers = {
@@ -32,6 +29,9 @@ module "k3s" {
         user = var.USER_LOGIN
       }
       flags = [
+        "--disable=traefik",
+        "--secrets-encryption",
+        "--tls-san ${local.CLUSTER_NAME}",
         "--datastore-endpoint=\"postgres://${var.K3S_DB_USER}@${var.POSTGRESQL_HOST}:${var.K3S_DB_PORT}/${postgresql_database.k3s.name}\"",
         "--datastore-cafile=\"${pathexpand(var.CLUSTER_CA_CERTIFICATE)}\"",
         "--datastore-certfile=\"${var.STEPCERTPATH}/k3s.crt\"",
