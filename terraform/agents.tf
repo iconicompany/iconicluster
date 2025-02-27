@@ -7,7 +7,7 @@ locals {
 # Указываем ВЦОД в котором порт будет создан, сеть к которой он должен быть присоединён и IP-адрес, а также шаблон брандмауэра
 
 resource "rustack_port" "agent_port" {
-  count      = var.SERVERS_NUM
+  count      = var.AGENTS_NUM
   vdc_id     = data.rustack_vdc.iconicvdc.id
   ip_address = "10.0.1.${count.index + 111}"
   network_id = data.rustack_network.iconicnet.id
@@ -25,14 +25,14 @@ resource "rustack_port" "agent_port" {
 }
 
 #resource "time_static" "agent_update" {
-#  count = var.SERVERS_NUM
+#  count = var.AGENTS_NUM
 #  triggers = {
 #    agent_id = resource.rustack_port.agent_port[count.index].id
 #  }
 #}
 
 data "template_file" "agent-cloud-config" {
-  count    = var.SERVERS_NUM
+  count    = var.AGENTS_NUM
   template = file("cluster-cloud-config.tpl")
   vars = {
     USER_LOGIN = var.USER_LOGIN

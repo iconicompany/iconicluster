@@ -89,3 +89,54 @@ resource "null_resource" "k3s_finalize" {
   }
 
 }
+
+resource "local_file" "registries_yaml" {
+  content  = templatefile("${path.module}/registries.yaml.tpl", {
+    CONTAINER_MIRROR          = var.CONTAINER_MIRROR
+    CONTAINER_REGISTRY        = var.CONTAINER_REGISTRY
+    CONTAINER_REGISTRY_USERNAME = var.CONTAINER_REGISTRY_USERNAME
+    CONTAINER_REGISTRY_PASSWORD = var.CONTAINER_REGISTRY_PASSWORD
+  })
+  filename = "${path.module}/registries.yaml"
+}
+
+resource "null_resource" "configure_node_registry" {
+  count  = var.SERVERS_NUM
+  provisioner "remote-exec" {
+    connection {
+      type     = "ssh"
+      host = rustack_vm.cluster[count.index].floating_ip
+      user = var.USER_LOGIN
+    }
+
+    on_failure = fail
+    inline = [
+      "set -o errexit",
+      "sudo mkdir -p /etc/rancher/k3s",
+      "cat <<EOF |sudo tee /etc/rancher/k3s/registries.yaml",
+      "${local_file.registries_yaml.content}",
+      "EOF",
+      "sudo chmod 600 /etc/rancher/k3s/registries.yaml",
+    ]
+  }
+}
+
+resource "null_resource" "configure_agent_registry" {
+  count  = var.AGENTS_NUM
+  provisioner "remote-exec" {
+    connection {
+      type     = "ssh"
+      host = rustack_vm.agent[count.index].floating_ip
+      user = var.USER_LOGIN
+    }
+    on_failure = fail
+    inline = [
+      "set -o errexit",
+      "sudo mkdir -p /etc/rancher/k3s",
+      "cat <<EOF |sudo tee /etc/rancher/k3s/registries.yaml",
+      "${local_file.registries_yaml.content}",
+      "EOF",
+      "sudo chmod 600 /etc/rancher/k3s/registries.yaml",
+    ]
+  }
+}

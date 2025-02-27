@@ -284,3 +284,22 @@ variable "ADD_DOMAIN" {
   type    = list(string)
   default = []
 }
+
+variable "CONTAINER_MIRROR" {
+  description = "Public container registry mirror"
+  default     = "https://mirror.gcr.io"
+}
+
+variable "CONTAINER_REGISTRY" {
+  description = "Private container registry"
+  default     = "ghcr.io"
+}
+
+variable "CONTAINER_REGISTRY_USERNAME" {
+  description = "Private container registry user name"
+}
+
+variable "CONTAINER_REGISTRY_PASSWORD" {
+  sensitive   = true
+  description = "Private container registry password"
+}
