@@ -4,7 +4,7 @@ data "rustack_dns" "cluster_dns" {
 }
 
 resource "rustack_dns_record" "node_ws_record" {
-  count  = var.SERVERS_NUM
+  count  = var.DNS_NUM
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${resource.terraform_data.hostname[count.index].output}."
@@ -19,7 +19,7 @@ resource "rustack_dns_record" "agent_ws_record" {
 }
 
 resource "rustack_dns_record" "cluster_ws_record" {
-  count  = var.SERVERS_NUM
+  count  = var.DNS_NUM
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${local.CLUSTER_NAME}."
@@ -27,7 +27,7 @@ resource "rustack_dns_record" "cluster_ws_record" {
 }
 
 resource "rustack_dns_record" "add_cluster_record" {
-  count  = var.SERVERS_NUM > 0 ? length(var.ADD_DOMAIN) : 0
+  count  = var.DNS_NUM > 0 ? length(var.ADD_DOMAIN) : 0
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "*.${var.ADD_DOMAIN[count.index]}.${var.CLUSTER_TLD}."
@@ -41,7 +41,7 @@ data "rustack_dns" "cluster_dns2" {
 }
 
 resource "rustack_dns_record" "add_cluster_record2" {
-  count  = var.SERVERS_NUM > 0 ? length(var.ADD_DOMAIN) : 0
+  count  = var.DNS_NUM > 0 ? length(var.ADD_DOMAIN) : 0
   dns_id = data.rustack_dns.cluster_dns2.id
   type   = "A"
   host   = "*.${var.ADD_DOMAIN[count.index]}.${var.CLUSTER_TLD2}."

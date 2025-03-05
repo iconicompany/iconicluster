@@ -72,7 +72,7 @@ variable "SERVERS_NUM" {
 
 variable "AGENTS_NUM" {
   description = "Number of agent nodes."
-  default     = 1
+  default     = 0
 }
 
 variable "CLUSTER_POWER" {
@@ -208,8 +208,23 @@ variable "CLIENT_KEY" {
   description = "Path to PEM-encoded client certificate key for TLS authentication"
   type        = string
 }
+
+
+variable "DNS_NUM" {
+  description = "Number of dns records for servers (usually equals to SERVERS_NUM)."
+  default     = 1
+}
+variable "REDIS_NUM" {
+  description = "Number of redis servers."
+  default     = 1
+}
+variable "MONGODB_NUM" {
+  description = "Number of mongodb servers."
+  default     = 1
+}
+
 variable "POSTGRESQL_NUM" {
-  description = "Number of control plane nodes."
+  description = "Number of postgresql servers"
   default     = 1
 }
 
