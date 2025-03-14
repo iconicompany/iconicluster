@@ -72,7 +72,7 @@ variable "SERVERS_NUM" {
 
 variable "AGENTS_NUM" {
   description = "Number of agent nodes."
-  default     = 0
+  default     = 1
 }
 
 variable "CLUSTER_POWER" {
