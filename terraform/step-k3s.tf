@@ -29,7 +29,7 @@ resource "null_resource" "step_k3s_cert" {
     vm_id = each.value.vm_id
   }
   connection {
-    host = each.value.external_ip
+    host = each.value.hostname
     user = var.USER_LOGIN
   }
 
@@ -73,7 +73,7 @@ resource "null_resource" "step_k3s_ca" {
   for_each = local.certificates_types
   connection {
     # Accessing [0] is safe due to the count condition
-    host = local.nodes_output.CLUSTER_NODES[0].external_ip
+    host = local.nodes_output.CLUSTER_NODES[0].hostname
     user = var.USER_LOGIN
   }
 

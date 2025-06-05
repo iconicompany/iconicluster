@@ -13,11 +13,11 @@ resource "rustack_dns_record" "mongodb_dns_record" {
       # Use the pre-generated hostname for MongoDB
       hostname    = terraform_data.mongodbname[i].output
       # Get the external IP from the corresponding cluster node
-      external_ip = local.nodes_output.CLUSTER_NODES[i].external_ip
+      external_ip = local.nodes_output.CLUSTER_NODES[i].hostname
     }
   }
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${each.value.hostname}."
-  data   = each.value.external_ip
+  data   = each.value.hostname
 }

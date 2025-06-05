@@ -20,7 +20,7 @@ resource "null_resource" "step_cli" {
     vm_id = each.value.vm_id
   }
   connection {
-    host = each.value.external_ip
+    host = each.value.hostname
     user = var.USER_LOGIN
   }
 

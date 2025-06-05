@@ -26,7 +26,7 @@ module "k3s" {
       ip   = node.internal_ip
       name = node.vm_name # or node.hostname
       connection = {
-        host = node.external_ip
+        host = node.hostname
         user = var.USER_LOGIN
       }
       flags = [
@@ -47,7 +47,7 @@ module "k3s" {
       ip   = node.internal_ip
       name = node.vm_name # or node.hostname
       connection = {
-        host = node.external_ip
+        host = node.hostname
         user = var.USER_LOGIN
       }
       #flags = [
@@ -79,7 +79,7 @@ resource "postgresql_database" "k3s" {
 resource "null_resource" "k3s_finalize" {
   depends_on = [module.k3s]
   connection {
-    host = local.nodes_output.CLUSTER_NODES[0].external_ip
+    host = local.nodes_output.CLUSTER_NODES[0].hostname
     user = var.USER_LOGIN
   }
 
@@ -106,7 +106,7 @@ resource "null_resource" "configure_node_registry" {
   provisioner "remote-exec" {
     connection {
       type = "ssh"
-      host = each.value.external_ip
+      host = each.value.hostname
       user = var.USER_LOGIN
     }
 
@@ -127,7 +127,7 @@ resource "null_resource" "configure_agent_registry" {
   provisioner "remote-exec" {
     connection {
       type = "ssh"
-      host = each.value.external_ip
+      host = each.value.hostname
       user = var.USER_LOGIN
     }
     on_failure = fail
