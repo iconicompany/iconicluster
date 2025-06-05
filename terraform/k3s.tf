@@ -1,6 +1,7 @@
 locals {
   CLUSTER_DOMAIN = "cluster.local"
 }
+
 module "k3s" {
   source = "github.com/iconicompany/terraform-module-k3s"
 
@@ -22,10 +23,10 @@ module "k3s" {
   servers = {
     for i in range(var.SERVERS_NUM) :
     i => {
-      ip = rustack_port.cluster_port[i].ip_address
-      name = rustack_vm.cluster[i].name
+      ip = module.nodes.cluster_internal_ips[i]
+      name = module.nodes.cluster_vm_names[i]
       connection = {
-        host = rustack_vm.cluster[i].floating_ip
+        host = module.nodes.cluster_floating_ips[i]
         user = var.USER_LOGIN
       }
       flags = [
@@ -43,10 +44,10 @@ module "k3s" {
   agents = {
     for i in range(var.AGENTS_NUM) :
     i => {
-      ip = rustack_port.agent_port[i].ip_address
-      name = rustack_vm.agent[i].name
+      ip = module.nodes.agent_internal_ips[i]    # Assuming agent_port is part of the new module
+      name = module.nodes.agent_vm_names[i]      # Assuming agent VM is part of the new module
       connection = {
-        host = rustack_vm.agent[i].floating_ip
+        host = module.nodes.agent_floating_ips[i] # Assuming agent VM is part of the new module
         user = var.USER_LOGIN
       }
       #flags = [
@@ -78,7 +79,7 @@ resource "postgresql_database" "k3s" {
 resource "null_resource" "k3s_finalize" {
   depends_on = [module.k3s]
   connection {
-    host = rustack_vm.cluster[0].floating_ip
+    host = module.nodes.cluster_floating_ips[0]
     user = var.USER_LOGIN
   }
 
@@ -105,7 +106,7 @@ resource "null_resource" "configure_node_registry" {
   provisioner "remote-exec" {
     connection {
       type     = "ssh"
-      host = rustack_vm.cluster[count.index].floating_ip
+      host = module.nodes.cluster_floating_ips[count.index]
       user = var.USER_LOGIN
     }
 
@@ -126,7 +127,7 @@ resource "null_resource" "configure_agent_registry" {
   provisioner "remote-exec" {
     connection {
       type     = "ssh"
-      host = rustack_vm.agent[count.index].floating_ip
+      host = module.nodes.agent_floating_ips[count.index]
       user = var.USER_LOGIN
     }
     on_failure = fail

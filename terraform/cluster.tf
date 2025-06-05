@@ -1,17 +1,36 @@
 locals {
-  CLUSTER_NAME   = "kube01.${var.CLUSTER_TLD}"
-  CLUSTER_HOST   = "kube01.${var.CLUSTER_TLD}:6443"
+  # This CLUSTER_NAME is used for k3s --tls-san and potentially other services.
+  # It represents the general cluster FQDN.
+  CLUSTER_NAME        = "kube01.${var.CLUSTER_TLD}"
+  CLUSTER_HOST        = "${local.CLUSTER_NAME}:6443"
+
+  # Base FQDNs for nodes, passed to the module.
+  # Node names will be like node01.kube01.example.com
+  cluster_nodes_base_fqdn = local.CLUSTER_NAME
+  # Agent names will be like agent01.agents.example.com
+  agent_nodes_base_fqdn   = "agents.${var.CLUSTER_TLD}" # Adjust if your agent naming is different
 }
 
-# Создание порта сервера (шаг 9)
-# Указываем ВЦОД в котором порт будет создан, сеть к которой он должен быть присоединён и IP-адрес, а также шаблон брандмауэра
+module "nodes" {
+  source = "./modules/nodes"
 
-resource "rustack_port" "cluster_port" {
-  count      = var.SERVERS_NUM
-  vdc_id     = data.rustack_vdc.iconicvdc.id
-  ip_address = "10.0.1.${count.index + 101}"
-  network_id = data.rustack_network.iconicnet.id
-  firewall_templates = [
+  SERVERS_NUM = var.SERVERS_NUM
+  AGENTS_NUM  = var.AGENTS_NUM
+
+  CLUSTER_SERVER_CONFIGS = var.CLUSTER_SERVER
+  AGENT_SERVER_CONFIGS   = var.AGENT_SERVER
+
+  USER_LOGIN = var.USER_LOGIN
+
+  CLUSTER_BASE_FQDN = local.cluster_nodes_base_fqdn
+  AGENT_BASE_FQDN   = local.agent_nodes_base_fqdn
+
+  CLUSTER_NODES_POWER_ON = var.CLUSTER_POWER
+  AGENT_NODES_POWER_ON   = var.AGENT_POWER # Assuming AGENT_POWER variable exists for global agent power
+
+  VDC_ID     = data.rustack_vdc.iconicvdc.id         # Assuming these data sources are defined in your root module
+  NETWORK_ID = data.rustack_network.iconicnet.id     # Assuming these data sources are defined in your root module
+  FIREWALL_TEMPLATE_IDS = [                          # Pass the list of firewall template IDs
     data.rustack_firewall_template.default.id,
     data.rustack_firewall_template.web.id,
     data.rustack_firewall_template.ssh.id,
@@ -22,56 +41,9 @@ resource "rustack_port" "cluster_port" {
     data.rustack_firewall_template.redis.id,
     data.rustack_firewall_template.temporal.id
   ]
-}
-
-#resource "time_static" "cluster_update" {
-#  count = var.SERVERS_NUM
-#  triggers = {
-#    cluster_id = resource.rustack_port.cluster_port[count.index].id
-#  }
-#}
-
-data "template_file" "cluster-cloud-config" {
-  count    = var.SERVERS_NUM
-  template = file("cluster-cloud-config.tpl")
-  vars = {
-    USER_LOGIN = var.USER_LOGIN
-    #public_key = file(var.public_key)
-    STEPPATH    = var.STEPPATH
-    HOSTNAME    = resource.terraform_data.hostname[count.index].output
-    SSH_USER_CA = file(var.SSH_USER_CA_FILE)
-  }
-}
-
-# Создание сервера.
-# Задаём его имя и конфигурацию. Выбираем шаблон ОС по его id, который получили на шаге 7. Ссылаемся на скрипт инициализации. Указываем размер и тип основного диска.
-# Выбираем порт сервера созданный на шаге 9
-# Указываем, что необходимо получить публичный адрес.
-resource "rustack_vm" "cluster" {
-  count  = var.SERVERS_NUM
-  vdc_id = data.rustack_vdc.iconicvdc.id
-  name   = resource.terraform_data.hostname[count.index].output
-  cpu    = var.CLUSTER_SERVER[count.index].cpu
-  ram    = var.CLUSTER_SERVER[count.index].ram
-  power  = var.CLUSTER_POWER && var.CLUSTER_SERVER[count.index].power
-
-  template_id = data.rustack_template.ubuntu22.id
-  user_data   = data.template_file.cluster-cloud-config[count.index].rendered
-
-  lifecycle {
-    ignore_changes = [user_data,template_id]
-  }
-  system_disk {
-    size               = var.CLUSTER_SERVER[count.index].disk
-    storage_profile_id = data.rustack_storage_profile.ssd.id
-  }
-
-  ports = [resource.rustack_port.cluster_port[count.index].id]
-
-  floating = true
-}
-
-resource "terraform_data" "hostname" {
-  count = var.SERVERS_NUM
-  input = "node0${count.index+1}.${local.CLUSTER_NAME}"
+  OS_TEMPLATE_ID       = data.rustack_template.ubuntu22.id   # Assuming these data sources are defined
+  STORAGE_PROFILE_ID   = data.rustack_storage_profile.ssd.id # Assuming these data sources are defined
+  STEPPATH             = var.STEPPATH
+  SSH_USER_CA_FILE_PATH = var.SSH_USER_CA_FILE # Pass the path, module will use file()
+  # ENABLE_FLOATING_IP can be set here if you want to control it from the root
 }
