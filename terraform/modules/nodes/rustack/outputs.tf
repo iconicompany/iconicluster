@@ -1,43 +1,25 @@
-output "cluster_hostnames" {
-  description = "List of hostnames for cluster VMs."
-  value       = [for ch in terraform_data.cluster_hostname : ch.output]
+output "CLUSTER_NODES" {
+  description = "List of objects describing provisioned cluster nodes."
+  value = [
+    for i in range(var.SERVERS_NUM) : {
+      hostname    = terraform_data.cluster_hostname[i].output
+      external_ip = rustack_vm.cluster_vm[i].floating_ip
+      internal_ip = rustack_port.cluster_port[i].ip_address
+      vm_name     = rustack_vm.cluster_vm[i].name
+      vm_id       = rustack_vm.cluster_vm[i].id
+    }
+  ]
 }
 
-output "cluster_external_ips" {
-  description = "List of floating IPs for cluster VMs."
-  value       = [for vm in rustack_vm.cluster_vm : vm.floating_ip]
-}
-
-output "cluster_internal_ips" {
-  description = "List of internal IPs for cluster VM ports."
-  value       = [for port in rustack_port.cluster_port : port.ip_address]
-}
-
-output "cluster_vm_names" {
-  description = "List of cluster VM names."
-  value       = [for vm in rustack_vm.cluster_vm : vm.name]
-}
-output "cluster_vm_ids" {
-  description = "List of cluster VM IDs."
-  value       = [for vm in rustack_vm.cluster_vm : vm.id]
-}
-
-output "agent_hostnames" {
-  description = "List of hostnames for agent VMs."
-  value       = [for ch in terraform_data.agent_hostname : ch.output]
-}
-
-output "agent_external_ips" {
-  description = "List of floating IPs for agent VMs."
-  value       = [for vm in rustack_vm.agent_vm : vm.floating_ip]
-}
-
-output "agent_internal_ips" {
-  description = "List of internal IPs for agent VM ports."
-  value       = [for port in rustack_port.agent_port : port.ip_address]
-}
-
-output "agent_vm_names" {
-  description = "List of agent VM names."
-  value       = [for vm in rustack_vm.agent_vm : vm.name]
+output "AGENT_NODES" {
+  description = "List of objects describing provisioned agent nodes."
+  value = [
+    for i in range(var.AGENTS_NUM) : {
+      hostname    = terraform_data.agent_hostname[i].output
+      external_ip = rustack_vm.agent_vm[i].floating_ip
+      internal_ip = rustack_port.agent_port[i].ip_address
+      vm_name     = rustack_vm.agent_vm[i].name
+      vm_id       = rustack_vm.agent_vm[i].id
+    }
+  ]
 }

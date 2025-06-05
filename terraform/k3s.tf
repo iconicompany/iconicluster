@@ -21,12 +21,12 @@ module "k3s" {
   ]
 
   servers = {
-    for i in range(var.SERVERS_NUM) :
-    i => {
-      ip = module.nodes.cluster_internal_ips[i]
-      name = module.nodes.cluster_vm_names[i]
+    for i, node in local.nodes_output.CLUSTER_NODES :
+    i => { # Using index i as key for compatibility if needed, or node.vm_name
+      ip   = node.internal_ip
+      name = node.vm_name # or node.hostname
       connection = {
-        host = module.nodes.cluster_external_ips[i]
+        host = node.external_ip
         user = var.USER_LOGIN
       }
       flags = [
@@ -42,12 +42,12 @@ module "k3s" {
     }
   }
   agents = {
-    for i in range(var.AGENTS_NUM) :
-    i => {
-      ip = module.nodes.agent_internal_ips[i]    # Assuming agent_port is part of the new module
-      name = module.nodes.agent_vm_names[i]      # Assuming agent VM is part of the new module
+    for i, node in local.nodes_output.AGENT_NODES :
+    i => { # Using index i as key
+      ip   = node.internal_ip
+      name = node.vm_name # or node.hostname
       connection = {
-        host = module.nodes.agent_external_ips[i] # Assuming agent VM is part of the new module
+        host = node.external_ip
         user = var.USER_LOGIN
       }
       #flags = [
@@ -63,9 +63,9 @@ module "k3s" {
 
 }
 resource "postgresql_role" "k3s" {
-  depends_on = [ null_resource.step_postgresql ]
-  name  = "k3s"
-  login = true
+  depends_on = [null_resource.step_postgresql]
+  name       = "k3s"
+  login      = true
 }
 
 resource "postgresql_database" "k3s" {
@@ -79,7 +79,7 @@ resource "postgresql_database" "k3s" {
 resource "null_resource" "k3s_finalize" {
   depends_on = [module.k3s]
   connection {
-    host = module.nodes.cluster_external_ips[0]
+    host = local.nodes_output.CLUSTER_NODES[0].external_ip
     user = var.USER_LOGIN
   }
 
@@ -92,9 +92,9 @@ resource "null_resource" "k3s_finalize" {
 }
 
 resource "local_file" "registries_yaml" {
-  content  = templatefile("${path.module}/registries.yaml.tpl", {
-    CONTAINER_MIRROR          = var.CONTAINER_MIRROR
-    CONTAINER_REGISTRY        = var.CONTAINER_REGISTRY
+  content = templatefile("${path.module}/registries.yaml.tpl", {
+    CONTAINER_MIRROR            = var.CONTAINER_MIRROR
+    CONTAINER_REGISTRY          = var.CONTAINER_REGISTRY
     CONTAINER_REGISTRY_USERNAME = var.CONTAINER_REGISTRY_USERNAME
     CONTAINER_REGISTRY_PASSWORD = var.CONTAINER_REGISTRY_PASSWORD
   })
@@ -102,11 +102,11 @@ resource "local_file" "registries_yaml" {
 }
 
 resource "null_resource" "configure_node_registry" {
-  count  = var.SERVERS_NUM
+  for_each = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
   provisioner "remote-exec" {
     connection {
-      type     = "ssh"
-      host = module.nodes.cluster_external_ips[count.index]
+      type = "ssh"
+      host = each.value.external_ip
       user = var.USER_LOGIN
     }
 
@@ -123,11 +123,11 @@ resource "null_resource" "configure_node_registry" {
 }
 
 resource "null_resource" "configure_agent_registry" {
-  count  = var.AGENTS_NUM
+  for_each = { for idx, node in local.nodes_output.AGENT_NODES : idx => node }
   provisioner "remote-exec" {
     connection {
-      type     = "ssh"
-      host = module.nodes.agent_external_ips[count.index]
+      type = "ssh"
+      host = each.value.external_ip
       user = var.USER_LOGIN
     }
     on_failure = fail

@@ -15,8 +15,8 @@ data "rustack_hypervisor" "kvm" {
 # Указываем id гипервизора, который получили на шаге 3 при обращении к datasource rustack_hypervisor (шаг 4)
 # replace data with resource and uncomment hypervisor_id to create
 data "rustack_vdc" "iconicvdc" {
-  name          = "Iconic KVM"
-  project_id    = data.rustack_project.iconicproject.id
+  name       = "Iconic KVM"
+  project_id = data.rustack_project.iconicproject.id
   #hypervisor_id = data.rustack_hypervisor.kvm.id
 }
 

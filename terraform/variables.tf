@@ -24,32 +24,32 @@ variable "USER_LOGIN" {
 }
 variable "CLUSTER_SERVER" {
   type = list(object({
-    cpu  = number
-    ram  = number
-    disk = number
+    cpu   = number
+    ram   = number
+    disk  = number
     power = bool
   }))
   default = [
     {
-      cpu  = 8
-      ram  = 16
-      disk = 160
+      cpu   = 8
+      ram   = 16
+      disk  = 160
       power = true
     }
   ]
 }
 variable "AGENT_SERVER" {
   type = list(object({
-    cpu  = number
-    ram  = number
-    disk = number
+    cpu   = number
+    ram   = number
+    disk  = number
     power = bool
   }))
   default = [
     {
-      cpu  = 4
-      ram  = 8
-      disk = 80
+      cpu   = 4
+      ram   = 8
+      disk  = 80
       power = true
     }
   ]
@@ -317,4 +317,22 @@ variable "CONTAINER_REGISTRY_USERNAME" {
 variable "CONTAINER_REGISTRY_PASSWORD" {
   sensitive   = true
   description = "Private container registry password"
+}
+
+
+variable "PROVISON_METHOD" {
+  description = "Provosion method (rustack/manual)"
+  default     = "rustack"
+}
+
+
+variable "MANUAL_CLUSTER_NODES" {
+  description = "MANUAL_CLUSTER_NODES"
+  default     = []
+}
+
+
+variable "MANUAL_AGENT_NODES" {
+  description = "MANUALMANUAL_AGENT_NODES_CLUSTER_NODES"
+  default     = []
 }

@@ -1,5 +1,6 @@
 locals {
-  certificates_names = var.SERVERS_NUM > 0 ? ["client-ca", "server-ca", "request-header-ca", "etcd/peer-ca", "etcd/server-ca"] : []
+  # Define certificate names only if there are cluster nodes to operate on
+  certificates_names = length(local.nodes_output.CLUSTER_NODES) > 0 ? ["client-ca", "server-ca", "request-header-ca", "etcd/peer-ca", "etcd/server-ca"] : []
   certificates_types = { for s in local.certificates_names : index(local.certificates_names, s) => s }
   source_ca_path     = "${var.STEPCERTPATH}/k3s/tls"
   target_ca_path     = "/var/lib/rancher/k3s/server/tls"
@@ -7,7 +8,8 @@ locals {
 
 # generate token for DB client certificate
 data "external" "step_k3s_token" {
-  count   = var.SERVERS_NUM
+  # Create a token for each actual cluster node
+  for_each = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
   program = ["bash", "${path.module}/step-ca-token.sh"]
 
   query = {
@@ -20,13 +22,14 @@ data "external" "step_k3s_token" {
 
 # generate DB client certificate
 resource "null_resource" "step_k3s_cert" {
-  count      = var.SERVERS_NUM
+  # Create a certificate for each actual cluster node
+  for_each   = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
   depends_on = [null_resource.step_cli]
   triggers = {
-    vm_id = module.nodes.cluster_vm_ids[count.index]
+    vm_id = each.value.vm_id
   }
   connection {
-    host = module.nodes.cluster_external_ips[count.index]
+    host = each.value.external_ip
     user = var.USER_LOGIN
   }
 
@@ -35,7 +38,7 @@ resource "null_resource" "step_k3s_cert" {
     inline = [
       "set -o errexit",
       "sudo mkdir -p ${var.STEPCERTPATH}",
-      "sudo env STEP_TOKEN=${data.external.step_k3s_token[count.index].result.TOKEN} step ca certificate k3s ${var.STEPCERTPATH}/k3s.crt ${var.STEPCERTPATH}/k3s.key -f --provisioner ${var.STEP_PROVISIONER}",
+      "sudo env STEP_TOKEN=${data.external.step_k3s_token[each.key].result.TOKEN} step ca certificate k3s ${var.STEPCERTPATH}/k3s.crt ${var.STEPCERTPATH}/k3s.key -f --provisioner ${var.STEP_PROVISIONER}",
       "sudo systemctl enable --now cert-renewer@k3s.timer"
     ]
   }
@@ -45,6 +48,8 @@ resource "null_resource" "step_k3s_cert" {
 
 # tokens for CA
 data "external" "step_k3s_ca_token" {
+  # This resource depends on local.certificates_types, which itself depends on
+  # whether there are any cluster nodes. If no nodes, local.certificates_types is empty.
   for_each = local.certificates_types
   program  = ["bash", "${path.module}/step-ca-token.sh"]
 
@@ -58,14 +63,17 @@ data "external" "step_k3s_ca_token" {
 
 # generate CA
 resource "null_resource" "step_k3s_ca" {
+  # This resource runs on the first cluster node for each certificate type.
+
   depends_on = [null_resource.step_cli]
   triggers = {
-    vm_id = module.nodes.cluster_vm_ids[0]
+    # Accessing [0] is safe due to the count condition
+    vm_id = local.nodes_output.CLUSTER_NODES[0].vm_id
   }
   for_each = local.certificates_types
   connection {
-    #host     = resource.terraform_data.hostname[0].output
-    host = module.nodes.cluster_external_ips[0]
+    # Accessing [0] is safe due to the count condition
+    host = local.nodes_output.CLUSTER_NODES[0].external_ip
     user = var.USER_LOGIN
   }
 
