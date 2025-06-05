@@ -8,7 +8,7 @@ data "external" "ssh_token" {
     STEP_PASSWORD_FILE = var.STEP_PASSWORD_FILE
     STEP_SSH     = 1
     STEP_HOST    = 1
-    CN            = resource.terraform_data.hostname[count.index].output
+    CN            = module.nodes.cluster_hostnames[count.index]
   }
 }
 
@@ -17,11 +17,11 @@ data "external" "ssh_token" {
 resource "null_resource" "step_cli" {
   count = var.SERVERS_NUM
   triggers = {
-    vm_id = rustack_vm.cluster[count.index].id
+    vm_id = module.nodes.cluster_vm_ids[count.index]
   }
   connection {
-        #host     = resource.terraform_data.hostname[count.index].output
-        host      = rustack_vm.cluster[count.index].floating_ip
+        #host     = module.nodes.cluster_hostnames[count.index]
+        host      = module.nodes.cluster_floating_ips[count.index]
         user      = var.USER_LOGIN
   }
 

@@ -8,7 +8,7 @@ resource "rustack_dns_record" "postgresql_dns_record" {
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${terraform_data.postgresqlname[count.index].output}."
-  data   = resource.rustack_vm.cluster[count.index].floating_ip
+  data   = module.nodes.cluster_floating_ips[count.index]
 }
 
 
@@ -16,10 +16,10 @@ resource "rustack_dns_record" "postgresql_dns_record" {
 resource "null_resource" "postgresql_server" {
   count = var.POSTGRESQL_NUM
   triggers = {
-    vm_id = rustack_vm.cluster[count.index].id
+    vm_id = module.nodes.cluster_vm_ids[count.index]
   }
   connection {
-    host = rustack_vm.cluster[count.index].floating_ip
+    host = module.nodes.cluster_floating_ips[count.index]
     user = var.USER_LOGIN
   }
   provisioner "remote-exec" {
@@ -47,10 +47,10 @@ resource "null_resource" "step_postgresql" {
   count      = var.POSTGRESQL_NUM
   depends_on = [null_resource.step_cli, null_resource.postgresql_server]
   triggers = {
-    vm_id = rustack_vm.cluster[count.index].id
+    vm_id = module.nodes.cluster_vm_ids[count.index]
   }
   connection {
-    host = rustack_vm.cluster[count.index].floating_ip
+    host = module.nodes.cluster_floating_ips[count.index]
     user = var.USER_LOGIN
   }
 
