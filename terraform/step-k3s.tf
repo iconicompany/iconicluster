@@ -64,8 +64,6 @@ data "external" "step_k3s_ca_token" {
 # generate CA
 resource "null_resource" "step_k3s_ca" {
   # This resource runs on the first cluster node for each certificate type.
-  # Only create instances if there are cluster nodes and certificate types to process.
-  count = length(local.nodes_output.CLUSTER_NODES) > 0 && length(local.certificates_types) > 0 ? 1 : 0
 
   depends_on = [null_resource.step_cli]
   triggers = {
