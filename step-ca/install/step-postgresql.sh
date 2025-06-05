@@ -11,10 +11,10 @@ if [ "$1" == "" ] ; then
 fi
 CN=${1}
 
-PG_HBA=/etc/postgresql/*/main/pg_hba.conf
+PG_HBA=/etc/postgresql/17/main/pg_hba.conf
 PG_HBA_CONFIG="hostssl all             all             all                     cert clientcert=verify-full clientname=DN  map=iconicompany"
 
-PG_IDENT=/etc/postgresql/*/main/pg_ident.conf
+PG_IDENT=/etc/postgresql/17/main/pg_ident.conf
 PG_IDENT_CONFIG='iconicompany    "/^CN=(.*),OU=users,O=iconicompany,C=ru$"    \1'
 
 # enable SSL
@@ -24,7 +24,7 @@ fi
 if ! sudo grep -Fq iconicompany $PG_IDENT; then
     echo $PG_IDENT_CONFIG | sudo tee -a $PG_IDENT
 fi
-sudo tee  /etc/postgresql/*/main/conf.d/iconicloud.conf <<EOT
+sudo tee  /etc/postgresql/17/main/conf.d/iconicloud.conf <<EOT
 listen_addresses = '*'
 ssl_ca_file = '${STEPPATH}/certs/root_ca.crt'
 ssl_cert_file = '${STEPCERTPATH}/postgresql.crt'
