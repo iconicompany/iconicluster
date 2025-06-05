@@ -1,5 +1,5 @@
 data "external" "ssh_token" {
-  count   = var.SERVERS_NUM
+  for_each = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
   program = ["bash", "${path.module}/step-ca-token.sh"]
 
   query = {
@@ -8,20 +8,19 @@ data "external" "ssh_token" {
     STEP_PASSWORD_FILE = var.STEP_PASSWORD_FILE
     STEP_SSH           = 1
     STEP_HOST          = 1
-    CN                 = module.nodes.cluster_hostnames[count.index]
+    CN                 = each.value.hostname
   }
 }
 
 
 // Install step-cli
 resource "null_resource" "step_cli" {
-  count = var.SERVERS_NUM
+  for_each = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
   triggers = {
-    vm_id = module.nodes.cluster_vm_ids[count.index]
+    vm_id = each.value.vm_id
   }
   connection {
-    #host     = module.nodes.cluster_hostnames[count.index]
-    host = module.nodes.cluster_external_ips[count.index]
+    host = each.value.external_ip
     user = var.USER_LOGIN
   }
 
@@ -30,7 +29,7 @@ resource "null_resource" "step_cli" {
     inline = [
       "set -o errexit",
       "curl -Ls https://github.com/iconicompany/iconicluster/raw/main/step-ca/install/step-cli.sh | bash -",
-      "curl -Ls https://github.com/iconicompany/iconicluster/raw/main/step-ca/install/step-sshd.sh |  env STEP_TOKEN=${data.external.ssh_token[count.index].result.TOKEN} bash -",
+      "curl -Ls https://github.com/iconicompany/iconicluster/raw/main/step-ca/install/step-sshd.sh |  env STEP_TOKEN=${data.external.ssh_token[each.key].result.TOKEN} bash -",
     ]
   }
 }

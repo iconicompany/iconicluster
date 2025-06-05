@@ -2,11 +2,17 @@ locals {
   TEMPORAL_DOMAIN = "temporal.${local.CLUSTER_NAME}"
 }
 resource "rustack_dns_record" "temporal_dns_record" {
-  count  = var.DNS_NUM
+  # Create DNS_NUM records for the TEMPORAL_DOMAIN, pointing to the
+  # external IPs of the first DNS_NUM cluster nodes (or fewer if not enough nodes).
+  # This allows for round-robin DNS if multiple records are created for the same host.
+  for_each = {
+    for i in range(min(var.DNS_NUM, length(local.nodes_output.CLUSTER_NODES))) :
+    i => local.nodes_output.CLUSTER_NODES[i].external_ip
+  }
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${local.TEMPORAL_DOMAIN}."
-  data   = module.nodes.cluster_external_ips[count.index]
+  data   = each.value # This is the external_ip from the for_each map
 }
 resource "postgresql_role" "temporal" {
   depends_on      = [null_resource.step_postgresql]

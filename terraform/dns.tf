@@ -4,34 +4,40 @@ data "rustack_dns" "cluster_dns" {
 }
 
 resource "rustack_dns_record" "node_ws_record" {
-  count  = var.DNS_NUM
+  for_each = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
-  host   = "${module.nodes.cluster_hostnames[count.index]}."
-  data   = module.nodes.cluster_external_ips[count.index]
+  host   = "${each.value.hostname}."
+  data   = each.value.external_ip
 }
+
 resource "rustack_dns_record" "agent_ws_record" {
-  count  = var.AGENTS_NUM
+  for_each = { for idx, node in local.nodes_output.AGENT_NODES : idx => node }
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
-  host   = "${module.nodes.cluster_hostnames[count.index]}."
-  data   = module.nodes.cluster_external_ips[count.index]
+  host   = "${each.value.hostname}." # Corrected to use agent hostname
+  data   = each.value.external_ip   # Corrected to use agent external_ip
 }
 
 resource "rustack_dns_record" "cluster_ws_record" {
-  count  = var.DNS_NUM
+  # Creates an A record for the main cluster FQDN for each cluster node
+  # This allows round-robin DNS if multiple master nodes exist.
+  for_each = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${local.CLUSTER_NAME}."
-  data   = module.nodes.cluster_external_ips[count.index]
+  data   = each.value.external_ip
 }
 
 resource "rustack_dns_record" "add_cluster_record" {
-  count  = var.DNS_NUM > 0 ? length(var.ADD_DOMAIN) : 0
+  # Creates wildcard A records for additional domains, pointing to the first cluster node's IP.
+  # Only create these if there's at least one cluster node and var.ADD_DOMAIN is not empty.
+  for_each = length(local.nodes_output.CLUSTER_NODES) > 0 ? toset(var.ADD_DOMAIN) : []
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
-  host   = "*.${var.ADD_DOMAIN[count.index]}.${var.CLUSTER_TLD}."
-  data   = module.nodes.cluster_external_ips[0]
+  host   = "*.${each.key}.${var.CLUSTER_TLD}."
+  # Ensure CLUSTER_NODES is not empty before accessing index [0]
+  data   = length(local.nodes_output.CLUSTER_NODES) > 0 ? local.nodes_output.CLUSTER_NODES[0].external_ip : null
 }
 
 
@@ -41,9 +47,13 @@ data "rustack_dns" "cluster_dns2" {
 }
 
 resource "rustack_dns_record" "add_cluster_record2" {
-  count  = var.DNS_NUM > 0 ? length(var.ADD_DOMAIN) : 0
+  # Creates wildcard A records for additional domains on the second TLD,
+  # pointing to the first cluster node's IP.
+  # Only create these if there's at least one cluster node and var.ADD_DOMAIN is not empty.
+  for_each = length(local.nodes_output.CLUSTER_NODES) > 0 ? toset(var.ADD_DOMAIN) : []
   dns_id = data.rustack_dns.cluster_dns2.id
   type   = "A"
-  host   = "*.${var.ADD_DOMAIN[count.index]}.${var.CLUSTER_TLD2}."
-  data   = module.nodes.cluster_external_ips[0]
+  host   = "*.${each.key}.${var.CLUSTER_TLD2}."
+  # Ensure CLUSTER_NODES is not empty before accessing index [0]
+  data   = length(local.nodes_output.CLUSTER_NODES) > 0 ? local.nodes_output.CLUSTER_NODES[0].external_ip : null
 }
