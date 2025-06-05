@@ -12,7 +12,7 @@ locals {
 }
 
 module "nodes" {
-  source = "./modules/nodes"
+  source = "./modules/nodes/rustack"
 
   SERVERS_NUM = var.SERVERS_NUM
   AGENTS_NUM  = var.AGENTS_NUM
