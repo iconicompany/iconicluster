@@ -21,7 +21,7 @@ resource "null_resource" "step_cli" {
   }
   connection {
         #host     = module.nodes.cluster_hostnames[count.index]
-        host      = module.nodes.cluster_floating_ips[count.index]
+        host      = module.nodes.cluster_external_ips[count.index]
         user      = var.USER_LOGIN
   }
 

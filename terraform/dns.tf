@@ -8,14 +8,14 @@ resource "rustack_dns_record" "node_ws_record" {
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${module.nodes.cluster_hostnames[count.index]}."
-  data   = module.nodes.cluster_floating_ips[count.index]
+  data   = module.nodes.cluster_external_ips[count.index]
 }
 resource "rustack_dns_record" "agent_ws_record" {
   count  = var.AGENTS_NUM
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${module.nodes.cluster_hostnames[count.index]}."
-  data   = module.nodes.cluster_floating_ips[count.index]
+  data   = module.nodes.cluster_external_ips[count.index]
 }
 
 resource "rustack_dns_record" "cluster_ws_record" {
@@ -23,7 +23,7 @@ resource "rustack_dns_record" "cluster_ws_record" {
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${local.CLUSTER_NAME}."
-  data   = module.nodes.cluster_floating_ips[count.index]
+  data   = module.nodes.cluster_external_ips[count.index]
 }
 
 resource "rustack_dns_record" "add_cluster_record" {
@@ -31,7 +31,7 @@ resource "rustack_dns_record" "add_cluster_record" {
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "*.${var.ADD_DOMAIN[count.index]}.${var.CLUSTER_TLD}."
-  data   = module.nodes.cluster_floating_ips[0]
+  data   = module.nodes.cluster_external_ips[0]
 }
 
 
@@ -45,5 +45,5 @@ resource "rustack_dns_record" "add_cluster_record2" {
   dns_id = data.rustack_dns.cluster_dns2.id
   type   = "A"
   host   = "*.${var.ADD_DOMAIN[count.index]}.${var.CLUSTER_TLD2}."
-  data   = module.nodes.cluster_floating_ips[0]
+  data   = module.nodes.cluster_external_ips[0]
 }

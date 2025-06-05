@@ -26,7 +26,7 @@ module "k3s" {
       ip = module.nodes.cluster_internal_ips[i]
       name = module.nodes.cluster_vm_names[i]
       connection = {
-        host = module.nodes.cluster_floating_ips[i]
+        host = module.nodes.cluster_external_ips[i]
         user = var.USER_LOGIN
       }
       flags = [
@@ -47,7 +47,7 @@ module "k3s" {
       ip = module.nodes.agent_internal_ips[i]    # Assuming agent_port is part of the new module
       name = module.nodes.agent_vm_names[i]      # Assuming agent VM is part of the new module
       connection = {
-        host = module.nodes.agent_floating_ips[i] # Assuming agent VM is part of the new module
+        host = module.nodes.agent_external_ips[i] # Assuming agent VM is part of the new module
         user = var.USER_LOGIN
       }
       #flags = [
@@ -79,7 +79,7 @@ resource "postgresql_database" "k3s" {
 resource "null_resource" "k3s_finalize" {
   depends_on = [module.k3s]
   connection {
-    host = module.nodes.cluster_floating_ips[0]
+    host = module.nodes.cluster_external_ips[0]
     user = var.USER_LOGIN
   }
 
@@ -106,7 +106,7 @@ resource "null_resource" "configure_node_registry" {
   provisioner "remote-exec" {
     connection {
       type     = "ssh"
-      host = module.nodes.cluster_floating_ips[count.index]
+      host = module.nodes.cluster_external_ips[count.index]
       user = var.USER_LOGIN
     }
 
@@ -127,7 +127,7 @@ resource "null_resource" "configure_agent_registry" {
   provisioner "remote-exec" {
     connection {
       type     = "ssh"
-      host = module.nodes.agent_floating_ips[count.index]
+      host = module.nodes.agent_external_ips[count.index]
       user = var.USER_LOGIN
     }
     on_failure = fail

@@ -26,7 +26,7 @@ resource "null_resource" "step_k3s_cert" {
     vm_id = module.nodes.cluster_vm_ids[count.index]
   }
   connection {
-    host = module.nodes.cluster_floating_ips[count.index]
+    host = module.nodes.cluster_external_ips[count.index]
     user = var.USER_LOGIN
   }
 
@@ -65,7 +65,7 @@ resource "null_resource" "step_k3s_ca" {
   for_each = local.certificates_types
   connection {
     #host     = resource.terraform_data.hostname[0].output
-    host = module.nodes.cluster_floating_ips[0]
+    host = module.nodes.cluster_external_ips[0]
     user = var.USER_LOGIN
   }
 

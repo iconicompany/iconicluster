@@ -3,7 +3,7 @@ output "cluster_hostnames" {
   value       = [for ch in terraform_data.cluster_hostname : ch.output]
 }
 
-output "cluster_floating_ips" {
+output "cluster_external_ips" {
   description = "List of floating IPs for cluster VMs."
   value       = [for vm in rustack_vm.cluster_vm : vm.floating_ip]
 }
@@ -27,7 +27,7 @@ output "agent_hostnames" {
   value       = [for ch in terraform_data.agent_hostname : ch.output]
 }
 
-output "agent_floating_ips" {
+output "agent_external_ips" {
   description = "List of floating IPs for agent VMs."
   value       = [for vm in rustack_vm.agent_vm : vm.floating_ip]
 }

@@ -6,7 +6,7 @@ resource "rustack_dns_record" "temporal_dns_record" {
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${local.TEMPORAL_DOMAIN}."
-  data   = module.nodes.cluster_floating_ips[count.index]
+  data   = module.nodes.cluster_external_ips[count.index]
 }
 resource "postgresql_role" "temporal" {
   depends_on = [ null_resource.step_postgresql ]
