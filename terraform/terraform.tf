@@ -1,8 +1,8 @@
 # Инициализация Terraform и конфигурации провайдера (шаг 1)
 terraform {
-#  backend "pg" {
-#    conn_str = "postgres://postgresql01.iconicompany.com/iterraform_testing"
-#  }
+  #  backend "pg" {
+  #    conn_str = "postgres://postgresql01.iconicompany.com/iterraform_testing"
+  #  }
 
   required_version = ">= 1.0.0"
 
@@ -34,7 +34,7 @@ provider "rustack" {
   token        = var.RUSTACK_TOKEN
 }
 provider "kubectl" {
-  host                   = "${local.CLUSTER_HOST}"
+  host                   = local.CLUSTER_HOST
   cluster_ca_certificate = file(pathexpand(var.CLUSTER_CA_CERTIFICATE))
   client_certificate     = file(pathexpand(var.CLIENT_CERTIFICATE))
   client_key             = file(pathexpand(var.CLIENT_KEY))
@@ -42,14 +42,14 @@ provider "kubectl" {
 }
 provider "helm" {
   kubernetes {
-    host                   = "${local.CLUSTER_HOST}"
+    host                   = local.CLUSTER_HOST
     cluster_ca_certificate = file(pathexpand(var.CLUSTER_CA_CERTIFICATE))
     client_certificate     = file(pathexpand(var.CLIENT_CERTIFICATE))
     client_key             = file(pathexpand(var.CLIENT_KEY))
   }
 }
 provider "kubernetes" {
-  host                   = "${local.CLUSTER_HOST}"
+  host                   = local.CLUSTER_HOST
   cluster_ca_certificate = file(pathexpand(var.CLUSTER_CA_CERTIFICATE))
   client_certificate     = file(pathexpand(var.CLIENT_CERTIFICATE))
   client_key             = file(pathexpand(var.CLIENT_KEY))

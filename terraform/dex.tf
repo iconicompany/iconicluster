@@ -8,11 +8,11 @@ resource "kubernetes_namespace" "dex" {
   }
 }
 resource "helm_release" "dex" {
-  name             = "dex"
-  repository       = "https://charts.dexidp.io"
-  chart            = "dex"
-  namespace        = kubernetes_namespace.dex.metadata[0].name
-  depends_on = [ postgresql_database.dex ]
+  name       = "dex"
+  repository = "https://charts.dexidp.io"
+  chart      = "dex"
+  namespace  = kubernetes_namespace.dex.metadata[0].name
+  depends_on = [postgresql_database.dex]
   #create_namespace = true
 
   values = [
@@ -40,14 +40,14 @@ resource "helm_release" "dex" {
     name  = "config.connectors[0].config.clientSecret"
     value = var.GITHUB_CLIENT_SECRET
   }
-#  set_sensitive {
-#    name  = "config.connectors[1].config.clientID"
-#    value = var.HH_CLIENT_ID
-#  }
-#  set_sensitive {
-#    name  = "config.connectors[1].config.clientSecret"
-#    value = var.HH_CLIENT_SECRET
-#  }
+  #  set_sensitive {
+  #    name  = "config.connectors[1].config.clientID"
+  #    value = var.HH_CLIENT_ID
+  #  }
+  #  set_sensitive {
+  #    name  = "config.connectors[1].config.clientSecret"
+  #    value = var.HH_CLIENT_SECRET
+  #  }
 
   set_sensitive {
     name  = "config.staticClients[1].secret"

@@ -1,4 +1,4 @@
-variable "MANUAL_CLUSTER_NODES" {
+variable "CLUSTER_NODES" {
   description = "List of objects describing manually provisioned cluster nodes."
   type = list(object({
     hostname    = string
@@ -10,7 +10,7 @@ variable "MANUAL_CLUSTER_NODES" {
   default     = []
 }
 
-variable "MANUAL_AGENT_NODES" {
+variable "AGENT_NODES" {
   description = "List of objects describing manually provisioned agent nodes."
   type = list(object({
     hostname    = string
