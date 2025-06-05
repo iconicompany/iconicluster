@@ -8,7 +8,7 @@ resource "rustack_dns_record" "node_ws_record" {
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${each.value.hostname}."
-  data   = each.value.hostname
+  data   = each.value.external_ip
 }
 
 resource "rustack_dns_record" "agent_ws_record" {
@@ -16,7 +16,7 @@ resource "rustack_dns_record" "agent_ws_record" {
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${each.value.hostname}." # Corrected to use agent hostname
-  data   = each.value.hostname   # Corrected to use agent external_ip
+  data   = each.value.external_ip   # Corrected to use agent external_ip
 }
 
 resource "rustack_dns_record" "cluster_ws_record" {
@@ -26,7 +26,7 @@ resource "rustack_dns_record" "cluster_ws_record" {
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${local.CLUSTER_NAME}."
-  data   = each.value.hostname
+  data   = each.value.external_ip
 }
 
 resource "rustack_dns_record" "add_cluster_record" {
@@ -37,7 +37,7 @@ resource "rustack_dns_record" "add_cluster_record" {
   type   = "A"
   host   = "*.${each.key}.${var.CLUSTER_TLD}."
   # Ensure CLUSTER_NODES is not empty before accessing index [0]
-  data   = length(local.nodes_output.CLUSTER_NODES) > 0 ? local.nodes_output.CLUSTER_NODES[0].hostname : null
+  data   = length(local.nodes_output.CLUSTER_NODES) > 0 ? local.nodes_output.CLUSTER_NODES[0].external_ip : null
 }
 
 
@@ -55,5 +55,5 @@ resource "rustack_dns_record" "add_cluster_record2" {
   type   = "A"
   host   = "*.${each.key}.${var.CLUSTER_TLD2}."
   # Ensure CLUSTER_NODES is not empty before accessing index [0]
-  data   = length(local.nodes_output.CLUSTER_NODES) > 0 ? local.nodes_output.CLUSTER_NODES[0].hostname : null
+  data   = length(local.nodes_output.CLUSTER_NODES) > 0 ? local.nodes_output.CLUSTER_NODES[0].external_ip : null
 }
