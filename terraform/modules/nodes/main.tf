@@ -66,7 +66,7 @@ resource "rustack_port" "agent_port" {
 
 data "template_file" "agent_cloud_config" {
   count    = var.AGENTS_NUM
-  template = file("${path.module}/agent-cloud-config.tpl") # Assumes agent-cloud-config.tpl is in the module directory
+  template = file("${path.module}/cluster-cloud-config.tpl") # Assumes agent-cloud-config.tpl is in the module directory
   vars = {
     USER_LOGIN  = var.USER_LOGIN
     STEPPATH    = var.STEPPATH

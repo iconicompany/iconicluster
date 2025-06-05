@@ -8,5 +8,5 @@ resource "rustack_dns_record" "mongodb_dns_record" {
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${terraform_data.mongodbname[count.index].output}."
-  data   = resource.rustack_vm.cluster[count.index].floating_ip
+  data   = module.nodes.cluster_floating_ips[count.index]
 }

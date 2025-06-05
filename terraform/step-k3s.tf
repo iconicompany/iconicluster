@@ -23,10 +23,10 @@ resource "null_resource" "step_k3s_cert" {
   count      = var.SERVERS_NUM
   depends_on = [null_resource.step_cli]
   triggers = {
-    vm_id = rustack_vm.cluster[count.index].id
+    vm_id = module.nodes.cluster_vm_ids[count.index]
   }
   connection {
-    host = rustack_vm.cluster[count.index].floating_ip
+    host = module.nodes.cluster_floating_ips[count.index]
     user = var.USER_LOGIN
   }
 
@@ -60,12 +60,12 @@ data "external" "step_k3s_ca_token" {
 resource "null_resource" "step_k3s_ca" {
   depends_on = [null_resource.step_cli]
   triggers = {
-    vm_id = rustack_vm.cluster[0].id
+    vm_id = module.nodes.cluster_vm_ids[0]
   }
   for_each = local.certificates_types
   connection {
     #host     = resource.terraform_data.hostname[0].output
-    host = rustack_vm.cluster[0].floating_ip
+    host = module.nodes.cluster_floating_ips[0]
     user = var.USER_LOGIN
   }
 
