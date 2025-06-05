@@ -1,7 +1,7 @@
 locals {
   # This CLUSTER_NAME is used for k3s --tls-san and potentially other services.
   # It represents the general cluster FQDN.
-  CLUSTER_NAME = "kube01.${var.CLUSTER_TLD}"
+  CLUSTER_NAME = "${var.CLUSTER_NAME}.${var.CLUSTER_TLD}"
   CLUSTER_HOST = "${local.CLUSTER_NAME}:6443"
 
   # Base FQDNs for nodes, passed to the module.
