@@ -19,5 +19,5 @@ resource "rustack_dns_record" "mongodb_dns_record" {
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${each.value.hostname}."
-  data   = each.value.hostname
+  data   = each.value.external_ip
 }

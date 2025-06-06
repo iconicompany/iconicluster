@@ -7,7 +7,7 @@ resource "rustack_dns_record" "temporal_dns_record" {
   # This allows for round-robin DNS if multiple records are created for the same host.
   for_each = {
     for i in range(min(var.DNS_NUM, length(local.nodes_output.CLUSTER_NODES))) :
-    i => local.nodes_output.CLUSTER_NODES[i].hostname
+    i => local.nodes_output.CLUSTER_NODES[i].external_ip
   }
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
