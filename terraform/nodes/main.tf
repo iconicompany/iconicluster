@@ -14,7 +14,7 @@ locals {
 # Rustack module definition
 module "nodes_rustack" {
   count  = var.PROVISON_METHOD == "rustack" ? 1 : 0
-  source = "./modules/nodes/rustack"
+  source = "../modules/nodes/rustack"
 
   # Inputs for the rustack nodes module
   SERVERS_NUM = var.SERVERS_NUM
@@ -53,7 +53,7 @@ module "nodes_rustack" {
 # Manual module definition
 module "nodes_manual" {
   count  = var.PROVISON_METHOD == "manual" ? 1 : 0
-  source = "./modules/nodes/manual"
+  source = "../modules/nodes/manual"
 
   CLUSTER_NODES = var.MANUAL_CLUSTER_NODES
   AGENT_NODES   = var.MANUAL_AGENT_NODES 
