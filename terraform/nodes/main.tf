@@ -70,3 +70,7 @@ locals {
 
   nodes_output = local.nodes_output_raw != null ? local.nodes_output_raw : local.default_node_outputs
 }
+
+output "nodes" {
+  value = local.nodes_output
+}
