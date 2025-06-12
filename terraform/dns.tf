@@ -25,7 +25,7 @@ resource "rustack_dns_record" "cluster_ws_record" {
   for_each = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
-  host   = "${local.CLUSTER_NAME}."
+  host   = "${local.CLUSTER_DOMAIN}."
   data   = each.value.external_ip
 }
 

@@ -1,5 +1,5 @@
 module "nginx-controller" {
-  depends_on = [null_resource.k3s_finalize]
+  # depends_on = [null_resource.k3s_finalize]
   source     = "terraform-iaac/nginx-controller/helm"
 }
 module "cert_manager" {
@@ -24,7 +24,7 @@ module "cert_manager" {
 
 resource "helm_release" "smallstep-autocert" {
   #count = 0
-  depends_on       = [null_resource.k3s_finalize]
+  # depends_on       = [null_resource.k3s_finalize]
   repository       = "https://smallstep.github.io/helm-charts"
   name             = "autocert"
   chart            = "autocert"
@@ -69,8 +69,8 @@ resource "helm_release" "smallstep-autocert" {
 #  count  = var.DNS_NUM
 #  dns_id = data.rustack_dns.cluster_dns.id
 #  type   = "CNAME"
-#  host   = "pgadmin4.${local.CLUSTER_NAME}."
-#  data   = "${local.CLUSTER_NAME}."
+#  host   = "pgadmin4.${local.CLUSTER_DOMAIN}."
+#  data   = "${local.CLUSTER_DOMAIN}."
 #}
 
 # resource "kubernetes_namespace" "pgadmin4" {
@@ -92,7 +92,7 @@ resource "helm_release" "smallstep-autocert" {
 #
 #  values = [
 #    templatefile("charts/pgadmin4-values.yaml.tpl", {
-#      DOMAIN = "pgadmin4.${local.CLUSTER_NAME}"
+#      DOMAIN = "pgadmin4.${local.CLUSTER_DOMAIN}"
 #    })
 #  ]
 #  set_sensitive {

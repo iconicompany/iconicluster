@@ -1,5 +1,5 @@
 locals {
-  GRAFANA_HOST   =  "grafana.${local.CLUSTER_NAME}"
+  GRAFANA_HOST   =  "grafana.${local.CLUSTER_DOMAIN}"
 }
 resource "rustack_dns_record" "grafana_dns_record" {
   # Create DNS_NUM records for the GRAFANA_HOST, pointing to the
@@ -135,8 +135,8 @@ resource "kubernetes_ingress_v1" "grafana" {
 #     }
 
 #     tls {
-#       secret_name = "grafana.${local.CLUSTER_NAME}"
-#       hosts = [ "grafana.${local.CLUSTER_NAME}" ]
+#       secret_name = "grafana.${local.CLUSTER_DOMAIN}"
+#       hosts = [ "grafana.${local.CLUSTER_DOMAIN}" ]
 #     }
 #   }
 # }

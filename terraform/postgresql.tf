@@ -1,6 +1,6 @@
 resource "terraform_data" "postgresqlname" {
   count = var.POSTGRESQL_NUM
-  input = "postgresql0${count.index + 1}.${local.CLUSTER_NAME}"
+  input = "postgresql0${count.index + 1}.${local.CLUSTER_DOMAIN}"
 }
 
 locals {
