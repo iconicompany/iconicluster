@@ -1,5 +1,5 @@
 locals {
-  CLUSTER_DOMAIN = "cluster.local"
+  CLUSTER_LOCAL_DOMAIN = "cluster.local"
 }
 
 module "k3s" {
@@ -8,7 +8,7 @@ module "k3s" {
   #depends_on_   = resource.rustack_vm.cluster 
   depends_on_    = null_resource.step_k3s_ca
   k3s_version    = "latest"
-  cluster_domain = local.CLUSTER_DOMAIN
+  cluster_domain = local.CLUSTER_LOCAL_DOMAIN
   cidr = {
     pods     = "10.42.0.0/16"
     services = "10.43.0.0/16"
@@ -32,7 +32,7 @@ module "k3s" {
       flags = [
         "--disable=traefik",
         "--secrets-encryption",
-        "--tls-san ${local.CLUSTER_NAME}",
+        "--tls-san ${local.CLUSTER_DOMAIN}",
         "--datastore-endpoint=\"postgres://${var.K3S_DB_USER}@${var.POSTGRESQL_HOST}:${var.K3S_DB_PORT}/${postgresql_database.k3s.name}\"",
         "--datastore-cafile=\"${pathexpand(var.CLUSTER_CA_CERTIFICATE)}\"",
         "--datastore-certfile=\"${var.STEPCERTPATH}/k3s.crt\"",

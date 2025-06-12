@@ -18,7 +18,7 @@ resource "helm_release" "dex" {
   values = [
     templatefile("charts/dex-values.yaml.tpl", {
       DEX_DOMAIN      = var.DEX_DOMAIN
-      DB_HOST         = terraform_data.postgresqlname[0].output
+      DB_HOST         = var.POSTGRESQL_HOST
       DB_NAME         = postgresql_database.dex.name
       DB_USER         = postgresql_role.dex.name
       TEMPORAL_DOMAIN = "${local.TEMPORAL_DOMAIN}"
@@ -60,7 +60,7 @@ resource "helm_release" "dex" {
 }
 
 resource "postgresql_role" "dex" {
-  depends_on = [null_resource.step_postgresql]
+  # depends_on = [null_resource.step_postgresql]
   name       = "dex"
   login      = true
 }

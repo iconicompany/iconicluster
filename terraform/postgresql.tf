@@ -1,6 +1,6 @@
 resource "terraform_data" "postgresqlname" {
   count = var.POSTGRESQL_NUM
-  input = "postgresql0${count.index + 1}.${local.CLUSTER_NAME}"
+  input = "postgresql0${count.index + 1}.${local.CLUSTER_DOMAIN}"
 }
 
 locals {
@@ -13,6 +13,7 @@ locals {
     tostring(i) => { # Use tostring(i) for the key to match data.external access
       pg_hostname      = terraform_data.postgresqlname[i].output
       node_external_ip = local.nodes_output.CLUSTER_NODES[i].external_ip
+      node_hostname = local.nodes_output.CLUSTER_NODES[i].hostname
       node_vm_id       = local.nodes_output.CLUSTER_NODES[i].vm_id
     }
   }
@@ -34,7 +35,7 @@ resource "null_resource" "postgresql_server" {
     vm_id = each.value.node_vm_id
   }
   connection {
-    host = each.value.node_external_ip
+    host = each.value.node_hostname
     user = var.USER_LOGIN
   }
   provisioner "remote-exec" {
@@ -66,7 +67,7 @@ resource "null_resource" "step_postgresql" {
     vm_id = each.value.node_vm_id
   }
   connection {
-    host = each.value.node_external_ip
+    host = each.value.node_hostname
     user = var.USER_LOGIN
   }
 
