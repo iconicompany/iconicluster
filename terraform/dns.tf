@@ -29,31 +29,29 @@ resource "rustack_dns_record" "cluster_ws_record" {
   data   = each.value.external_ip
 }
 
-resource "rustack_dns_record" "add_cluster_record" {
-  # Creates wildcard A records for additional domains, pointing to the first cluster node's IP.
-  # Only create these if there's at least one cluster node and var.ADD_DOMAIN is not empty.
-  for_each = length(local.nodes_output.CLUSTER_NODES) > 0 ? toset(var.ADD_DOMAIN) : []
-  dns_id = data.rustack_dns.cluster_dns.id
-  type   = "A"
-  host   = "*.${each.key}.${local.CLUSTER_TLD}."
-  # Ensure CLUSTER_NODES is not empty before accessing index [0]
-  data   = length(local.nodes_output.CLUSTER_NODES) > 0 ? local.nodes_output.CLUSTER_NODES[0].external_ip : null
+locals {
+  domains_with_tld = {
+    for domain in var.ADD_DOMAIN :
+    domain => join(".", slice(split(".", domain), length(split(".", domain)) - 2, length(split(".", domain))))
+  }
+
+  # Получим уникальные TLD
+  unique_tlds = toset(values(local.domains_with_tld))
 }
 
-
-data "rustack_dns" "cluster_dns2" {
-  name       = "${var.CLUSTER_TLD2}."
+data "rustack_dns" "tld" {
+  for_each   = local.unique_tlds
+  name       = "${each.value}."
   project_id = data.rustack_project.iconicproject.id
 }
 
-resource "rustack_dns_record" "add_cluster_record2" {
-  # Creates wildcard A records for additional domains on the second TLD,
-  # pointing to the first cluster node's IP.
-  # Only create these if there's at least one cluster node and var.ADD_DOMAIN is not empty.
+resource "rustack_dns_record" "records" {
+
   for_each = length(local.nodes_output.CLUSTER_NODES) > 0 ? toset(var.ADD_DOMAIN) : []
-  dns_id = data.rustack_dns.cluster_dns2.id
+  dns_id = data.rustack_dns.tld[local.domains_with_tld[each.key]].id
   type   = "A"
-  host   = "*.${each.key}.${var.CLUSTER_TLD2}."
+  host   = "*.${each.key}."
   # Ensure CLUSTER_NODES is not empty before accessing index [0]
   data   = length(local.nodes_output.CLUSTER_NODES) > 0 ? local.nodes_output.CLUSTER_NODES[0].external_ip : null
+
 }
