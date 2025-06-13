@@ -60,11 +60,6 @@ variable "CLUSTER_DOMAIN" {
   type        = string
 }
 
-variable "CLUSTER_TLD2" {
-  description = "Cluster second top level domain name, e.g example.com"
-  type        = string
-}
-
 variable "SERVERS_NUM" {
   description = "Number of control plane nodes."
   default     = 1
