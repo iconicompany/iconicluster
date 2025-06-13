@@ -1,11 +1,11 @@
 locals {
-  TEMPORAL_DOMAIN = "temporal.${local.CLUSTER_DOMAIN}"
+  TEMPORAL_DOMAIN = "temporal.${var.CLUSTER_DOMAIN}"
 }
 resource "rustack_dns_record" "temporal_dns_record" {
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "CNAME"
   host   = "${local.TEMPORAL_DOMAIN}."
-  data   = "${local.CLUSTER_DOMAIN}."
+  data   = "${var.CLUSTER_DOMAIN}."
 }
 resource "postgresql_role" "temporal" {
   # depends_on      = [null_resource.step_postgresql]

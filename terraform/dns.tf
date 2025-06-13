@@ -1,5 +1,5 @@
 data "rustack_dns" "cluster_dns" {
-  name       = "${var.CLUSTER_TLD}."
+  name       = "${local.CLUSTER_TLD}."
   project_id = data.rustack_project.iconicproject.id
 }
 
@@ -25,7 +25,7 @@ resource "rustack_dns_record" "cluster_ws_record" {
   for_each = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
-  host   = "${local.CLUSTER_DOMAIN}."
+  host   = "${var.CLUSTER_DOMAIN}."
   data   = each.value.external_ip
 }
 
@@ -35,7 +35,7 @@ resource "rustack_dns_record" "add_cluster_record" {
   for_each = length(local.nodes_output.CLUSTER_NODES) > 0 ? toset(var.ADD_DOMAIN) : []
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
-  host   = "*.${each.key}.${var.CLUSTER_TLD}."
+  host   = "*.${each.key}.${local.CLUSTER_TLD}."
   # Ensure CLUSTER_NODES is not empty before accessing index [0]
   data   = length(local.nodes_output.CLUSTER_NODES) > 0 ? local.nodes_output.CLUSTER_NODES[0].external_ip : null
 }

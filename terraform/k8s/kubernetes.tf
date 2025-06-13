@@ -69,8 +69,8 @@ resource "helm_release" "smallstep-autocert" {
 #  count  = var.DNS_NUM
 #  dns_id = data.rustack_dns.cluster_dns.id
 #  type   = "CNAME"
-#  host   = "pgadmin4.${local.CLUSTER_DOMAIN}."
-#  data   = "${local.CLUSTER_DOMAIN}."
+#  host   = "pgadmin4.${var.CLUSTER_DOMAIN}."
+#  data   = "${var.CLUSTER_DOMAIN}."
 #}
 
 # resource "kubernetes_namespace" "pgadmin4" {
@@ -92,7 +92,7 @@ resource "helm_release" "smallstep-autocert" {
 #
 #  values = [
 #    templatefile("charts/pgadmin4-values.yaml.tpl", {
-#      DOMAIN = "pgadmin4.${local.CLUSTER_DOMAIN}"
+#      DOMAIN = "pgadmin4.${var.CLUSTER_DOMAIN}"
 #    })
 #  ]
 #  set_sensitive {
