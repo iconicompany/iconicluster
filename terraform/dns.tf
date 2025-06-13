@@ -39,16 +39,16 @@ locals {
   unique_tlds = toset(values(local.domains_with_tld))
 }
 
-data "rustack_dns" "tld" {
+data "rustack_dns" "add_domain_tld" {
   for_each   = local.unique_tlds
   name       = "${each.value}."
   project_id = data.rustack_project.iconicproject.id
 }
 
-resource "rustack_dns_record" "records" {
+resource "rustack_dns_record" "add_domain_record" {
 
   for_each = length(local.nodes_output.CLUSTER_NODES) > 0 ? toset(var.ADD_DOMAIN) : []
-  dns_id = data.rustack_dns.tld[local.domains_with_tld[each.key]].id
+  dns_id = data.rustack_dns.add_domain_tld[local.domains_with_tld[each.key]].id
   type   = "A"
   host   = "*.${each.key}."
   # Ensure CLUSTER_NODES is not empty before accessing index [0]
