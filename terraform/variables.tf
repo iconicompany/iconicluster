@@ -60,12 +60,12 @@ variable "CLUSTER_DOMAIN" {
   type        = string
 }
 
-variable "SERVERS_NUM" {
+variable "RUSTACK_SERVERS_NUM" {
   description = "Number of control plane nodes."
   default     = 1
 }
 
-variable "AGENTS_NUM" {
+variable "RUSTACK_AGENTS_NUM" {
   description = "Number of agent nodes."
   default     = 0
 }

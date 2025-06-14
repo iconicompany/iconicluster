@@ -15,12 +15,12 @@ locals {
 
 # Rustack module definition
 module "nodes_rustack" {
-  count  = var.PROVISON_METHOD == "rustack" ? 1 : 0
+  count  = var.RUSTACK_SERVERS_NUM > 0 ? 1 : 0
   source = "./modules/nodes/rustack"
 
   # Inputs for the rustack nodes module
-  SERVERS_NUM = var.SERVERS_NUM
-  AGENTS_NUM  = var.AGENTS_NUM
+  SERVERS_NUM = var.RUSTACK_SERVERS_NUM
+  AGENTS_NUM  = var.RUSTACK_AGENTS_NUM
 
   CLUSTER_SERVER_CONFIGS = var.CLUSTER_SERVER
   AGENT_SERVER_CONFIGS   = var.AGENT_SERVER
@@ -54,7 +54,7 @@ module "nodes_rustack" {
 
 # Manual module definition
 module "nodes_manual" {
-  count  = var.PROVISON_METHOD == "manual" ? 1 : 0
+  count  = length(var.MANUAL_CLUSTER_NODES) > 0 ? 1 : 0
   source = "./modules/nodes/manual"
 
   CLUSTER_NODES = var.MANUAL_CLUSTER_NODES
@@ -63,12 +63,18 @@ module "nodes_manual" {
 
 # Unified outputs for downstream modules like k3s
 locals {
-  nodes_output_raw = var.PROVISON_METHOD == "rustack" ? (length(module.nodes_rustack) > 0 ? module.nodes_rustack[0] : null) : (length(module.nodes_manual) > 0 ? module.nodes_manual[0] : null)
-
-  default_node_outputs = {
+  rustack_output = length(module.nodes_rustack) > 0 ? module.nodes_rustack[0] : {
     CLUSTER_NODES = []
     AGENT_NODES   = []
   }
 
-  nodes_output = local.nodes_output_raw != null ? local.nodes_output_raw : local.default_node_outputs
+  manual_output = length(module.nodes_manual) > 0 ? module.nodes_manual[0] : {
+    CLUSTER_NODES = []
+    AGENT_NODES   = []
+  }
+
+  nodes_output = {
+    CLUSTER_NODES = concat(local.rustack_output.CLUSTER_NODES, local.manual_output.CLUSTER_NODES)
+    AGENT_NODES   = concat(local.rustack_output.AGENT_NODES, local.manual_output.AGENT_NODES)
+  }
 }
