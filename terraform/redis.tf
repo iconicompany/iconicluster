@@ -1,6 +1,6 @@
 resource "terraform_data" "redisname" {
   count = var.REDIS_NUM
-  input = "redis0${count.index + 1}.${local.CLUSTER_DOMAIN}"
+  input = "redis0${count.index + 1}.${var.CLUSTER_DOMAIN}"
 }
 
 resource "rustack_dns_record" "redis_dns_record" {

@@ -55,19 +55,8 @@ variable "AGENT_SERVER" {
   ]
 }
 
-variable "CLUSTER_NAME" {
-  description = "The prefix for the cluster name, e.g., 'kube01'. This will be combined with CLUSTER_TLD."
-  type        = string
-  default     = "kube01"
-}
-
-variable "CLUSTER_TLD" {
-  description = "Cluster top level domain name, e.g example.com"
-  type        = string
-}
-
-variable "CLUSTER_TLD2" {
-  description = "Cluster second top level domain name, e.g example.com"
+variable "CLUSTER_DOMAIN" {
+  description = "The prefix for the cluster name, e.g., 'kube01.icncd.ru'. This will be combined with CLUSTER_TLD."
   type        = string
 }
 

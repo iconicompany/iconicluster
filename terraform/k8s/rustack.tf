@@ -5,6 +5,6 @@ data "rustack_project" "iconicproject" {
 
 
 data "rustack_dns" "cluster_dns" {
-  name       = "${var.CLUSTER_TLD}."
+  name       = "${local.CLUSTER_TLD}."
   project_id = data.rustack_project.iconicproject.id
 }

@@ -1,14 +1,16 @@
 locals {
   # This CLUSTER_DOMAIN is used for k3s --tls-san and potentially other services.
   # It represents the general cluster FQDN.
-  CLUSTER_DOMAIN = "${var.CLUSTER_NAME}.${var.CLUSTER_TLD}"
-  CLUSTER_HOST = "${local.CLUSTER_DOMAIN}:6443"
+  # CLUSTER_DOMAIN = "${var.CLUSTER_NAME}.${local.CLUSTER_TLD}"
+  CLUSTER_HOST = "${var.CLUSTER_DOMAIN}:6443"
+  domain_parts = split(".", var.CLUSTER_DOMAIN)
+  CLUSTER_TLD  = join(".", slice(local.domain_parts, length(local.domain_parts) - 2, length(local.domain_parts)))
 
   # Base FQDNs for nodes, passed to the module.
   # Node names will be like node01.kube01.example.com
-  cluster_nodes_base_fqdn = local.CLUSTER_DOMAIN
+  cluster_nodes_base_fqdn = var.CLUSTER_DOMAIN
   # Agent names will be like agent01.agents.example.com
-  agent_nodes_base_fqdn = "agents.${var.CLUSTER_TLD}" # Adjust if your agent naming is different
+  agent_nodes_base_fqdn = "agents.${local.CLUSTER_TLD}" # Adjust if your agent naming is different
 }
 
 # Rustack module definition

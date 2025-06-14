@@ -32,7 +32,7 @@ module "k3s" {
       flags = [
         "--disable=traefik",
         "--secrets-encryption",
-        "--tls-san ${local.CLUSTER_DOMAIN}",
+        "--tls-san ${var.CLUSTER_DOMAIN}",
         "--datastore-endpoint=\"postgres://${var.K3S_DB_USER}@${var.POSTGRESQL_HOST}:${var.K3S_DB_PORT}/${postgresql_database.k3s.name}\"",
         "--datastore-cafile=\"${pathexpand(var.CLUSTER_CA_CERTIFICATE)}\"",
         "--datastore-certfile=\"${var.STEPCERTPATH}/k3s.crt\"",

@@ -1,6 +1,6 @@
 resource "terraform_data" "mongodbname" {
   count = var.MONGODB_NUM
-  input = "mongodb0${count.index + 1}.${local.CLUSTER_DOMAIN}"
+  input = "mongodb0${count.index + 1}.${var.CLUSTER_DOMAIN}"
 }
 
 resource "rustack_dns_record" "mongodb_dns_record" {
