@@ -65,13 +65,13 @@ variable "RUSTACK_AGENTS_NUM" {
   default     = 0
 }
 
-variable "CLUSTER_POWER" {
+variable "RUSTACK_CLUSTER_POWER" {
   description = "Cluster power switch"
   type        = bool
   default     = true
 }
 
-variable "AGENT_POWER" {
+variable "RUSTACK_AGENT_POWER" {
   description = "Agents power switch"
   type        = bool
   default     = true
@@ -129,30 +129,6 @@ variable "STEP_PASSWORD_KUBE_CA" {
   description = "StepCA password file for CA generation"
   type        = string
 }
-variable "STEP_PROVISIONER_AUTOCERT" {
-  description = "StepCA kube provisioner name for autocert"
-  type        = string
-  default     = "autocert"
-}
-
-variable "STEP_PASSWORD_AUTOCERT" {
-  description = "StepCA password file for autocert"
-  type        = string
-}
-
-
-variable "STEP_STATIC_CLIENT_SECRET" {
-  description = "StepCA static client secret"
-  type        = string
-}
-variable "TEMPORAL_STATIC_CLIENT_SECRET" {
-  description = "Teporal static client secret"
-  type        = string
-}
-variable "TEMPORAL_DB_PASSWORD" {
-  description = "Teporal DB password"
-  type        = string
-}
 
 variable "SSH_HOST_CA_FILE" {
   description = "StepCA host SSH CA"
@@ -177,7 +153,6 @@ variable "CLUSTER_ISSUER_EMAIL" {
   type        = string
 }
 
-
 variable "CLUSTER_GRANT_ROLE" {
   description = "Grant role for user after cluster install"
   type        = string
@@ -198,7 +173,6 @@ variable "CLIENT_KEY" {
   description = "Path to PEM-encoded client certificate key for TLS authentication"
   type        = string
 }
-
 
 variable "DNS_NUM" {
   description = "Number of dns records for servers (usually equals to SERVERS_NUM)."
@@ -241,50 +215,6 @@ variable "K3S_DB_USER" {
   default     = "k3s"
 }
 
-variable "DEX_DOMAIN" {
-  description = "DEX_DOMAIN, e.g dex.example.com"
-  type        = string
-}
-variable "GITHUB_CLIENT_ID" {
-  description = "GITHUB_CLIENT_ID for DEX IDP"
-  type        = string
-}
-
-variable "GITHUB_CLIENT_SECRET" {
-  description = "GITHUB_CLIENT_SECRET for DEX IDP"
-  type        = string
-}
-
-variable "HH_CLIENT_ID" {
-  description = "HH_CLIENT_ID for DEX IDP"
-  type        = string
-}
-
-variable "HH_CLIENT_SECRET" {
-  description = "HH_CLIENT_SECRET for DEX IDP"
-  type        = string
-}
-
-variable "PGADMIN4_EMAIL" {
-  description = "PGADMIN4_EMAIL"
-  type        = string
-}
-
-
-variable "PGADMIN4_PASSWORD" {
-  description = "PGADMIN4_PASSWORD"
-  type        = string
-}
-
-variable "OUTLINE_CLIENT_SECRET" {
-  description = "OUTLINE_CLIENT_SECRET for DEX IDP"
-  type        = string
-}
-variable "OUTLINE_DOMAIN" {
-  description = "OUTLINE_DOMAIN, e.g docs.example.com"
-  type        = string
-}
-
 variable "ADD_DOMAIN" {
   type    = list(string)
   default = []
@@ -307,12 +237,6 @@ variable "CONTAINER_REGISTRY_USERNAME" {
 variable "CONTAINER_REGISTRY_PASSWORD" {
   sensitive   = true
   description = "Private container registry password"
-}
-
-
-variable "PROVISON_METHOD" {
-  description = "Provosion method (rustack/manual)"
-  default     = "rustack"
 }
 
 

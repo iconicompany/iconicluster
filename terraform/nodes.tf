@@ -29,8 +29,8 @@ module "nodes_rustack" {
   CLUSTER_BASE_FQDN = local.SERVER_NODES_BASE_FQDN
   AGENT_BASE_FQDN   = local.AGENT_NODES_BASE_FQDN
 
-  SERVER_NODES_POWER_ON = var.CLUSTER_POWER
-  AGENT_NODES_POWER_ON   = var.AGENT_POWER # Assuming AGENT_POWER variable exists for global agent power
+  SERVER_NODES_POWER_ON = var.RUSTACK_CLUSTER_POWER
+  AGENT_NODES_POWER_ON   = var.RUSTACK_AGENT_POWER # Assuming RUSTACK_AGENT_POWER variable exists for global agent power
 
   VDC_ID     = data.rustack_vdc.iconicvdc.id     # Assuming these data sources are defined in your root module
   NETWORK_ID = data.rustack_network.iconicnet.id # Assuming these data sources are defined in your root module
