@@ -10,7 +10,7 @@ variable "AGENTS_NUM" {
   default     = 0
 }
 
-variable "CLUSTER_SERVER_CONFIGS" {
+variable "SERVER_NODES" {
   description = "Configuration for each cluster server (cpu, ram, disk, power)."
   type = list(object({
     cpu   = number
@@ -20,7 +20,7 @@ variable "CLUSTER_SERVER_CONFIGS" {
   }))
 }
 
-variable "AGENT_SERVER_CONFIGS" {
+variable "NODES_CONFIG" {
   description = "Configuration for each agent server (cpu, ram, disk, power)."
   type = list(object({
     cpu   = number

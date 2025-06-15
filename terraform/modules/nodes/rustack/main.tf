@@ -28,9 +28,9 @@ resource "rustack_vm" "cluster_vm" {
   count  = var.SERVERS_NUM
   vdc_id = var.VDC_ID
   name   = resource.terraform_data.cluster_hostname[count.index].output
-  cpu    = var.CLUSTER_SERVER_CONFIGS[count.index].cpu
-  ram    = var.CLUSTER_SERVER_CONFIGS[count.index].ram
-  power  = var.SERVER_NODES_POWER_ON && var.CLUSTER_SERVER_CONFIGS[count.index].power
+  cpu    = var.SERVER_NODES[count.index].cpu
+  ram    = var.SERVER_NODES[count.index].ram
+  power  = var.SERVER_NODES_POWER_ON && var.SERVER_NODES[count.index].power
 
   template_id = var.OS_TEMPLATE_ID
   user_data   = data.template_file.cluster_cloud_config[count.index].rendered
@@ -40,7 +40,7 @@ resource "rustack_vm" "cluster_vm" {
   }
 
   system_disk {
-    size               = var.CLUSTER_SERVER_CONFIGS[count.index].disk
+    size               = var.SERVER_NODES[count.index].disk
     storage_profile_id = var.STORAGE_PROFILE_ID
   }
 
@@ -79,9 +79,9 @@ resource "rustack_vm" "agent_vm" {
   count  = var.AGENTS_NUM
   vdc_id = var.VDC_ID
   name   = resource.terraform_data.agent_hostname[count.index].output
-  cpu    = var.AGENT_SERVER_CONFIGS[count.index].cpu
-  ram    = var.AGENT_SERVER_CONFIGS[count.index].ram
-  power  = var.AGENT_NODES_POWER_ON && var.AGENT_SERVER_CONFIGS[count.index].power
+  cpu    = var.NODES_CONFIG[count.index].cpu
+  ram    = var.NODES_CONFIG[count.index].ram
+  power  = var.AGENT_NODES_POWER_ON && var.NODES_CONFIG[count.index].power
 
   template_id = var.OS_TEMPLATE_ID
   user_data   = data.template_file.agent_cloud_config[count.index].rendered
@@ -91,7 +91,7 @@ resource "rustack_vm" "agent_vm" {
   }
 
   system_disk {
-    size               = var.AGENT_SERVER_CONFIGS[count.index].disk
+    size               = var.NODES_CONFIG[count.index].disk
     storage_profile_id = var.STORAGE_PROFILE_ID
   }
 

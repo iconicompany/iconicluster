@@ -8,13 +8,8 @@ variable "RUSTACK_TOKEN" {
   type        = string
 }
 
-# variable "public_key" {
+# variable "PUBLIC_KEY" {
 #   description = "User's public key file path"
-#   type        = string
-# }
-
-# variable "public_key_rsa" {
-#   description = "User's public key rsa file path"
 #   type        = string
 # }
 
@@ -22,7 +17,7 @@ variable "USER_LOGIN" {
   description = "User's login"
   type        = string
 }
-variable "CLUSTER_SERVER" {
+variable "RUSTACK_SERVER_NODES" {
   type = list(object({
     cpu   = number
     ram   = number
@@ -38,7 +33,7 @@ variable "CLUSTER_SERVER" {
     }
   ]
 }
-variable "AGENT_SERVER" {
+variable "RUSTACK_AGENT_NODES" {
   type = list(object({
     cpu   = number
     ram   = number
@@ -47,9 +42,9 @@ variable "AGENT_SERVER" {
   }))
   default = [
     {
-      cpu   = 4
-      ram   = 8
-      disk  = 80
+      cpu   = 8
+      ram   = 16
+      disk  = 160
       power = true
     }
   ]
