@@ -30,7 +30,7 @@ resource "rustack_vm" "cluster_vm" {
   name   = resource.terraform_data.cluster_hostname[count.index].output
   cpu    = var.CLUSTER_SERVER_CONFIGS[count.index].cpu
   ram    = var.CLUSTER_SERVER_CONFIGS[count.index].ram
-  power  = var.CLUSTER_NODES_POWER_ON && var.CLUSTER_SERVER_CONFIGS[count.index].power
+  power  = var.SERVER_NODES_POWER_ON && var.CLUSTER_SERVER_CONFIGS[count.index].power
 
   template_id = var.OS_TEMPLATE_ID
   user_data   = data.template_file.cluster_cloud_config[count.index].rendered

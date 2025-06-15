@@ -1,4 +1,4 @@
-variable "CLUSTER_NODES" {
+variable "SERVER_NODES" {
   description = "List of objects describing manually provisioned cluster nodes."
   type = list(object({
     hostname    = string

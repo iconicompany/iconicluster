@@ -1,5 +1,5 @@
 data "external" "ssh_token" {
-  for_each = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
+  for_each = { for idx, node in local.nodes_output.SERVER_NODES : idx => node }
   program = ["bash", "${path.module}/step-ca-token.sh"]
 
   query = {
@@ -15,7 +15,7 @@ data "external" "ssh_token" {
 
 // Install step-cli
 resource "null_resource" "step_cli" {
-  for_each = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
+  for_each = { for idx, node in local.nodes_output.SERVER_NODES : idx => node }
   triggers = {
     vm_id = each.value.vm_id
   }

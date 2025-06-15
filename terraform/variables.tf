@@ -321,13 +321,13 @@ variable "PROVISON_METHOD" {
 }
 
 
-variable "MANUAL_CLUSTER_NODES" {
-  description = "MANUAL_CLUSTER_NODES"
+variable "MANUAL_SERVER_NODES" {
+  description = "MANUAL_SERVER_NODES"
   default     = []
 }
 
 
 variable "MANUAL_AGENT_NODES" {
-  description = "MANUALMANUAL_AGENT_NODES_CLUSTER_NODES"
+  description = "MANUALMANUAL_AGENT_NODES_SERVER_NODES"
   default     = []
 }

@@ -8,12 +8,12 @@ resource "rustack_dns_record" "redis_dns_record" {
   # or fewer if there are not enough cluster nodes.
   # This assumes Redis instances are associated with these cluster nodes.
   for_each = {
-    for i in range(min(var.REDIS_NUM, length(local.nodes_output.CLUSTER_NODES))) :
+    for i in range(min(var.REDIS_NUM, length(local.nodes_output.SERVER_NODES))) :
     i => {
       # Use the pre-generated hostname for Redis
       hostname    = terraform_data.redisname[i].output
       # Get the external IP from the corresponding cluster node
-      external_ip = local.nodes_output.CLUSTER_NODES[i].external_ip
+      external_ip = local.nodes_output.SERVER_NODES[i].external_ip
     }
   }
   dns_id = data.rustack_dns.cluster_dns.id

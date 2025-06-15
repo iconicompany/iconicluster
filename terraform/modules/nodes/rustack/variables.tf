@@ -45,7 +45,7 @@ variable "AGENT_BASE_FQDN" {
   type        = string
 }
 
-variable "CLUSTER_NODES_POWER_ON" {
+variable "SERVER_NODES_POWER_ON" {
   description = "Global power switch for cluster nodes."
   type        = bool
   default     = true

@@ -21,7 +21,7 @@ module "k3s" {
   ]
 
   servers = {
-    for i, node in local.nodes_output.CLUSTER_NODES :
+    for i, node in local.nodes_output.SERVER_NODES :
     i => { # Using index i as key for compatibility if needed, or node.vm_name
       ip   = node.internal_ip
       name = node.vm_name # or node.hostname
@@ -79,7 +79,7 @@ resource "postgresql_database" "k3s" {
 resource "null_resource" "k3s_finalize" {
   depends_on = [module.k3s]
   connection {
-    host = local.nodes_output.CLUSTER_NODES[0].hostname
+    host = local.nodes_output.SERVER_NODES[0].hostname
     user = var.USER_LOGIN
   }
 
@@ -102,7 +102,7 @@ resource "local_file" "registries_yaml" {
 }
 
 resource "null_resource" "configure_node_registry" {
-  for_each = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
+  for_each = { for idx, node in local.nodes_output.SERVER_NODES : idx => node }
   provisioner "remote-exec" {
     connection {
       type = "ssh"

@@ -1,6 +1,6 @@
 locals {
   # Define certificate names only if there are cluster nodes to operate on
-  certificates_names = length(local.nodes_output.CLUSTER_NODES) > 0 ? ["client-ca", "server-ca", "request-header-ca", "etcd/peer-ca", "etcd/server-ca"] : []
+  certificates_names = length(local.nodes_output.SERVER_NODES) > 0 ? ["client-ca", "server-ca", "request-header-ca", "etcd/peer-ca", "etcd/server-ca"] : []
   certificates_types = { for s in local.certificates_names : index(local.certificates_names, s) => s }
   source_ca_path     = "${var.STEPCERTPATH}/k3s/tls"
   target_ca_path     = "/var/lib/rancher/k3s/server/tls"
@@ -9,7 +9,7 @@ locals {
 # generate token for DB client certificate
 data "external" "step_k3s_token" {
   # Create a token for each actual cluster node
-  for_each = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
+  for_each = { for idx, node in local.nodes_output.SERVER_NODES : idx => node }
   program = ["bash", "${path.module}/step-ca-token.sh"]
 
   query = {
@@ -23,7 +23,7 @@ data "external" "step_k3s_token" {
 # generate DB client certificate
 resource "null_resource" "step_k3s_cert" {
   # Create a certificate for each actual cluster node
-  for_each   = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
+  for_each   = { for idx, node in local.nodes_output.SERVER_NODES : idx => node }
   depends_on = [null_resource.step_cli]
   triggers = {
     vm_id = each.value.vm_id
@@ -68,12 +68,12 @@ resource "null_resource" "step_k3s_ca" {
   depends_on = [null_resource.step_cli]
   triggers = {
     # Accessing [0] is safe due to the count condition
-    vm_id = local.nodes_output.CLUSTER_NODES[0].vm_id
+    vm_id = local.nodes_output.SERVER_NODES[0].vm_id
   }
   for_each = local.certificates_types
   connection {
     # Accessing [0] is safe due to the count condition
-    host = local.nodes_output.CLUSTER_NODES[0].hostname
+    host = local.nodes_output.SERVER_NODES[0].hostname
     user = var.USER_LOGIN
   }
 

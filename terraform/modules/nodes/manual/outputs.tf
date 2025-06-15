@@ -1,6 +1,6 @@
-output "CLUSTER_NODES" {
+output "SERVER_NODES" {
   description = "List of objects describing manually provisioned cluster nodes."
-  value       = var.CLUSTER_NODES
+  value       = var.SERVER_NODES
 }
 
 output "AGENT_NODES" {

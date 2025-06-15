@@ -1,4 +1,4 @@
-output "CLUSTER_NODES" {
+output "SERVER_NODES" {
   description = "List of objects describing provisioned cluster nodes."
   value = [
     for i in range(var.SERVERS_NUM) : {

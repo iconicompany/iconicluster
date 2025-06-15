@@ -9,12 +9,12 @@ locals {
   # The value contains details for that PostgreSQL instance and the
   # cluster node it will run on.
   postgresql_instances_on_nodes = {
-    for i in range(min(var.POSTGRESQL_NUM, length(local.nodes_output.CLUSTER_NODES))) :
+    for i in range(min(var.POSTGRESQL_NUM, length(local.nodes_output.SERVER_NODES))) :
     tostring(i) => { # Use tostring(i) for the key to match data.external access
       pg_hostname      = terraform_data.postgresqlname[i].output
-      node_external_ip = local.nodes_output.CLUSTER_NODES[i].external_ip
-      node_hostname = local.nodes_output.CLUSTER_NODES[i].hostname
-      node_vm_id       = local.nodes_output.CLUSTER_NODES[i].vm_id
+      node_external_ip = local.nodes_output.SERVER_NODES[i].external_ip
+      node_hostname = local.nodes_output.SERVER_NODES[i].hostname
+      node_vm_id       = local.nodes_output.SERVER_NODES[i].vm_id
     }
   }
 }

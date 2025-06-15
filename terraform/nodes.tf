@@ -8,9 +8,9 @@ locals {
 
   # Base FQDNs for nodes, passed to the module.
   # Node names will be like node01.kube01.example.com
-  cluster_nodes_base_fqdn = var.CLUSTER_DOMAIN
-  # Agent names will be like agent01.agents.example.com
-  agent_nodes_base_fqdn = "agents.${local.CLUSTER_TLD}" # Adjust if your agent naming is different
+  SERVER_NODES_BASE_FQDN = var.CLUSTER_DOMAIN
+  # Agent names will be like agent01.kube01.example.com
+  AGENT_NODES_BASE_FQDN = var.CLUSTER_DOMAIN
 }
 
 # Rustack module definition
@@ -26,10 +26,10 @@ module "nodes_rustack" {
   AGENT_SERVER_CONFIGS   = var.AGENT_SERVER
   USER_LOGIN             = var.USER_LOGIN
 
-  CLUSTER_BASE_FQDN = local.cluster_nodes_base_fqdn
-  AGENT_BASE_FQDN   = local.agent_nodes_base_fqdn
+  CLUSTER_BASE_FQDN = local.SERVER_NODES_BASE_FQDN
+  AGENT_BASE_FQDN   = local.AGENT_NODES_BASE_FQDN
 
-  CLUSTER_NODES_POWER_ON = var.CLUSTER_POWER
+  SERVER_NODES_POWER_ON = var.CLUSTER_POWER
   AGENT_NODES_POWER_ON   = var.AGENT_POWER # Assuming AGENT_POWER variable exists for global agent power
 
   VDC_ID     = data.rustack_vdc.iconicvdc.id     # Assuming these data sources are defined in your root module
@@ -54,27 +54,27 @@ module "nodes_rustack" {
 
 # Manual module definition
 module "nodes_manual" {
-  count  = length(var.MANUAL_CLUSTER_NODES) > 0 ? 1 : 0
+  count  = length(var.MANUAL_SERVER_NODES) > 0 ? 1 : 0
   source = "./modules/nodes/manual"
 
-  CLUSTER_NODES = var.MANUAL_CLUSTER_NODES
+  SERVER_NODES = var.MANUAL_SERVER_NODES
   AGENT_NODES   = var.MANUAL_AGENT_NODES 
   }
 
 # Unified outputs for downstream modules like k3s
 locals {
   rustack_output = length(module.nodes_rustack) > 0 ? module.nodes_rustack[0] : {
-    CLUSTER_NODES = []
+    SERVER_NODES = []
     AGENT_NODES   = []
   }
 
   manual_output = length(module.nodes_manual) > 0 ? module.nodes_manual[0] : {
-    CLUSTER_NODES = []
+    SERVER_NODES = []
     AGENT_NODES   = []
   }
 
   nodes_output = {
-    CLUSTER_NODES = concat(local.rustack_output.CLUSTER_NODES, local.manual_output.CLUSTER_NODES)
+    SERVER_NODES = concat(local.rustack_output.SERVER_NODES, local.manual_output.SERVER_NODES)
     AGENT_NODES   = concat(local.rustack_output.AGENT_NODES, local.manual_output.AGENT_NODES)
   }
 }

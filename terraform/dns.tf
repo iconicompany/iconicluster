@@ -4,7 +4,7 @@ data "rustack_dns" "cluster_dns" {
 }
 
 resource "rustack_dns_record" "node_ws_record" {
-  for_each = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
+  for_each = { for idx, node in local.nodes_output.SERVER_NODES : idx => node }
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${each.value.hostname}."
@@ -22,7 +22,7 @@ resource "rustack_dns_record" "agent_ws_record" {
 resource "rustack_dns_record" "cluster_ws_record" {
   # Creates an A record for the main cluster FQDN for each cluster node
   # This allows round-robin DNS if multiple master nodes exist.
-  for_each = { for idx, node in local.nodes_output.CLUSTER_NODES : idx => node }
+  for_each = { for idx, node in local.nodes_output.SERVER_NODES : idx => node }
   dns_id = data.rustack_dns.cluster_dns.id
   type   = "A"
   host   = "${var.CLUSTER_DOMAIN}."
@@ -47,11 +47,11 @@ data "rustack_dns" "add_domain_tld" {
 
 resource "rustack_dns_record" "add_domain_record" {
 
-  for_each = length(local.nodes_output.CLUSTER_NODES) > 0 ? toset(var.ADD_DOMAIN) : []
+  for_each = length(local.nodes_output.SERVER_NODES) > 0 ? toset(var.ADD_DOMAIN) : []
   dns_id = data.rustack_dns.add_domain_tld[local.domains_with_tld[each.key]].id
   type   = "A"
   host   = "*.${each.key}."
-  # Ensure CLUSTER_NODES is not empty before accessing index [0]
-  data   = length(local.nodes_output.CLUSTER_NODES) > 0 ? local.nodes_output.CLUSTER_NODES[0].external_ip : null
+  # Ensure SERVER_NODES is not empty before accessing index [0]
+  data   = length(local.nodes_output.SERVER_NODES) > 0 ? local.nodes_output.SERVER_NODES[0].external_ip : null
 
 }
