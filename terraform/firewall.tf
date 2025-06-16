@@ -68,3 +68,18 @@ data "rustack_firewall_template" "redis" {
   vdc_id = data.rustack_vdc.iconicvdc.id
   name   = "redis"
 }
+
+resource "rustack_firewall_template" "nebula" {
+  vdc_id = data.rustack_vdc.iconicvdc.id
+  name   = "nebula"
+  tags = ["created_by:terraform"]
+}
+
+resource "rustack_firewall_template_rule" "nebula_rule" {
+    firewall_id = resource.rustack_firewall_template.nebula.id
+    name = "nebula"
+    direction = "ingress"
+    protocol = "udp"
+    port_range = "4242"
+    destination_ip = "0.0.0.0/0"
+}

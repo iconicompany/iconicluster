@@ -43,7 +43,8 @@ module "nodes_rustack" {
     data.rustack_firewall_template.postgresql.id,
     data.rustack_firewall_template.mongodb.id,
     data.rustack_firewall_template.redis.id,
-    data.rustack_firewall_template.temporal.id
+    data.rustack_firewall_template.temporal.id,
+    resource.rustack_firewall_template.nebula.id
   ]
   OS_TEMPLATE_ID        = data.rustack_template.ubuntu22.id   # Assuming these data sources are defined
   STORAGE_PROFILE_ID    = data.rustack_storage_profile.ssd.id # Assuming these data sources are defined
