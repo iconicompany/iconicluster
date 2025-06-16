@@ -54,13 +54,13 @@ module "nodes_rustack" {
 }
 
 # Manual module definition
-module "nodes_manual" {
-  count  = length(var.MANUAL_SERVER_NODES) > 0 ? 1 : 0
-  source = "./modules/nodes/manual"
+# module "nodes_manual" {
+#   count  = length(var.MANUAL_SERVER_NODES) > 0 ? 1 : 0
+#   source = "./modules/nodes/manual"
 
-  SERVER_NODES = var.MANUAL_SERVER_NODES
-  AGENT_NODES   = var.MANUAL_AGENT_NODES 
-  }
+#   SERVER_NODES = var.MANUAL_SERVER_NODES
+#   AGENT_NODES   = var.MANUAL_AGENT_NODES 
+# }
 
 # Unified outputs for downstream modules like k3s
 locals {
@@ -69,13 +69,13 @@ locals {
     AGENT_NODES   = []
   }
 
-  manual_output = length(module.nodes_manual) > 0 ? module.nodes_manual[0] : {
-    SERVER_NODES = []
-    AGENT_NODES   = []
-  }
+  # manual_output = length(module.nodes_manual) > 0 ? module.nodes_manual[0] : {
+  #   SERVER_NODES = []
+  #   AGENT_NODES   = []
+  # }
 
   nodes_output = {
-    SERVER_NODES = concat(local.rustack_output.SERVER_NODES, local.manual_output.SERVER_NODES)
-    AGENT_NODES   = concat(local.rustack_output.AGENT_NODES, local.manual_output.AGENT_NODES)
+    SERVER_NODES = concat(local.rustack_output.SERVER_NODES, var.MANUAL_SERVER_NODES)
+    AGENT_NODES   = concat(local.rustack_output.AGENT_NODES, var.MANUAL_AGENT_NODES)
   }
 }
