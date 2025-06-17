@@ -1,0 +1,25 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: enforce-zone-production
+spec:
+  rules:
+    - name: add-zone-affinity
+      match:
+        any:
+          - resources:
+              kinds: ["Pod"]
+              namespaces: ["*production*"]
+      mutate:
+        patchStrategicMerge:
+          spec:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: zone
+                          operator: In
+                          values:
+                            - production
+

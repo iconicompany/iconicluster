@@ -1,0 +1,26 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: enforce-zone-affinity
+spec:
+  rules:
+    - name: add-zone-affinity-based-on-namespace
+      match:
+        any:
+          - resources:
+              kinds: ["Pod"]
+              namespaces:
+                - "*"
+      mutate:
+        patchStrategicMerge:
+          spec:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: zone
+                          operator: In
+                          values:
+                            - "{{ request.namespace | contains('testing') | ternary('testing', 'production') }}"
+

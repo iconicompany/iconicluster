@@ -1,0 +1,26 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: enforce-zone-affinity-ns-label
+spec:
+  rules:
+    - name: set-zone-affinity-based-on-ns-label
+      match:
+        any:
+          - resources:
+              kinds: ["Pod"]
+              namespaces:
+                - "*"
+      mutate:
+        patchStrategicMerge:
+          spec:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: zone
+                          operator: In
+                          values:
+                            - "{{ request.namespaceLabels.zone || 'production' }}"
+
