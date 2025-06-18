@@ -107,13 +107,13 @@ variable "CLUSTER_IP_START_OFFSET" {
 variable "AGENT_IP_NETWORK_PREFIX" {
   description = "Network prefix for agent node IPs, e.g., 10.0.2."
   type        = string
-  default     = "10.0.2."
+  default     = "10.0.1."
 }
 
 variable "AGENT_IP_START_OFFSET" {
   description = "Starting offset for agent node IPs, e.g., 1 for 10.0.2.1."
   type        = number
-  default     = 1
+  default     = 151
 }
 
 variable "ENABLE_FLOATING_IP" {
