@@ -10,6 +10,7 @@
 5. Подключитесь к k8s через k9s
 [Скрипт установки для k9s](https://github.com/iconicompany/osboxes/raw/master/ubuntu/apps/k9s.sh) 
 6. Подключитесь к Postgresql: `psql -h postgresql01.kube01.icncd.ru postgres`.
+7. Установка kubectl: `curl -L https://raw.githubusercontent.com/iconicompany/osboxes/refs/heads/master/ubuntu/apps/k3s-kubectl.sh|bash -`
 
 Команда для проверки subject сертифката:
 `openssl x509 -noout -subject -in $HOME/.step/certs/my.crt`
