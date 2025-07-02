@@ -12,8 +12,8 @@
 6. Подключитесь к Postgresql: `psql -h postgresql01.kube01.icncd.ru postgres`.
 7. Установка kubectl: `curl -L https://raw.githubusercontent.com/iconicompany/osboxes/refs/heads/master/ubuntu/apps/k3s-kubectl.sh|bash -`
 
-Команда для проверки subject сертифката:
-`openssl x509 -noout -subject -in $HOME/.step/certs/my.crt`
+Команда для проверки subject и срока сертифката:
+`openssl x509 -noout -subject -startdate -enddate -in $HOME/.step/certs/my.crt`
 Должна вывести subject=C = ru, O = iconicompany, OU = users, CN = MY-LOGIN
 
 ![dbeaver01.jpg](docs/dbeaver01.jpg)
