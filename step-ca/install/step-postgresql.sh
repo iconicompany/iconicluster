@@ -33,7 +33,7 @@ ssl_cert_file = '${STEPCERTPATH}/postgresql.crt'
 ssl_key_file = '${STEPCERTPATH}/postgresql.key'
 EOT
 
-curl -Ls https://github.com/iconicompany/iconicluster/raw/main/step-ca/bin/step-cert-service.sh | bash -s - ${CN} postgresql
+curl -Ls https://github.com/iconicompany/iconicluster/raw/main/step-ca/bin/step-cert-service.sh | bash -s - -u postgres ${CN} postgresql
 # certificate and key access for postgresql
 sudo gpasswd -a postgres step
 ## allow database and role creation for current user
