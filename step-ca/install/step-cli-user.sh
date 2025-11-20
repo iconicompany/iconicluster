@@ -57,7 +57,7 @@ STEP_ROOT_PG=${PGCERTPATH}/root.crt
 mkdir -p $STEPCERTPATH $PGCERTPATH
 export STEP_TOKEN=$(step oauth --bare --oidc \
         --client-id step-ca --client-secret step-ca-secret \
-        --provider https://id.iconicompany.com \
+        --provider https://dex.iconicompany.com \
         --listen 127.0.0.1:9999 \
         --scope openid --scope groups --scope email --scope profile)
 step ca certificate $CN ${CRT} ${KEY}  --force
