@@ -14,12 +14,14 @@ admintools:
   podAnnotations:
     autocert.step.sm/name: temporal
     autocert.step.sm/duration: 720h
+    autocert.step.sm/owner: "1000:1000"
     autocert.step.sm/mode: "u=rw,go="
 schema:
   podAnnotations:
     autocert.step.sm/name: temporal
     autocert.step.sm/duration: 720h
     autocert.step.sm/mode: "u=rw,go="
+  # certificate auth not working in schema creation due to init containers https://github.com/smallstep/autocert/issues/279
   createDatabase:
     enabled: false
   setup:
@@ -72,11 +74,12 @@ server:
           host: ${DB_HOST}
           port: 5432
           database: ${DB_NAME}
-          #user: temporal
+          user: temporal
           #password: _PASSWORD_
           # for a production deployment use this instead of `password` and provision the secret beforehand e.g. with a sealed secret
           # it has a single key called `password`
-          #existingSecret: {DB_SECRET_NAME}
+          # пароль не используется, в БД через сертификат
+          existingSecret: ${DB_SECRET_NAME}
           maxConns: 20
           maxConnLifetime: "1h"
           # certificate auth not working in schema creation due to init containers https://github.com/smallstep/autocert/issues/279
@@ -96,11 +99,11 @@ server:
           host: ${DB_HOST}
           port: 5432
           database: ${DB_VISIBILITY_NAME}
-          #user: temporal
+          user: temporal
           #password: _PASSWORD_
           # for a production deployment use this instead of `password` and provision the secret beforehand e.g. with a sealed secret
           # it has a single key called `password`
-          #existingSecret: {DB_SECRET_NAME}
+          existingSecret: ${DB_SECRET_NAME}
           maxConns: 20
           maxConnLifetime: "1h"
           tls:
@@ -141,6 +144,7 @@ web:
   podAnnotations:
     autocert.step.sm/name: temporal
     autocert.step.sm/duration: 720h
+    autocert.step.sm/owner: "1000:1000"
     autocert.step.sm/mode: "u=rw,go="
   additionalEnv:
     - name: TEMPORAL_AUTH_CLIENT_SECRET
