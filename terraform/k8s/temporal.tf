@@ -13,7 +13,7 @@ resource "postgresql_role" "temporal" {
   login           = true
   create_database = true
   # пароль не используется, в БД через сертификат
-  password = var.TEMPORAL_DB_PASSWORD
+  # password = var.TEMPORAL_DB_PASSWORD
 }
 
 
@@ -71,7 +71,7 @@ resource "helm_release" "temporal" {
       DB_NAME            = postgresql_database.temporal.name
       DB_VISIBILITY_NAME = postgresql_database.temporal_visibility.name
       # пароль не используется, в БД через сертификат
-      DB_SECRET_NAME     = "temporal-secret"  #kubernetes_secret.temporal.metadata[0].name
+      DB_SECRET_NAME     = kubernetes_secret.temporal.metadata[0].name
     })
   ]
   set_sensitive {

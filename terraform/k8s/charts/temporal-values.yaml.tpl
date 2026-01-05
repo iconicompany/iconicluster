@@ -80,7 +80,7 @@ server:
           # for a production deployment use this instead of `password` and provision the secret beforehand e.g. with a sealed secret
           # it has a single key called `password`
           # пароль не используется, в БД через сертификат
-          existingSecret: ${DB_SECRET_NAME}
+          #existingSecret: ${DB_SECRET_NAME}
           maxConns: 20
           maxConnLifetime: "1h"
           # certificate auth not working in schema creation due to init containers https://github.com/smallstep/autocert/issues/279
@@ -104,7 +104,8 @@ server:
           #password: _PASSWORD_
           # for a production deployment use this instead of `password` and provision the secret beforehand e.g. with a sealed secret
           # it has a single key called `password`
-          existingSecret: ${DB_SECRET_NAME}
+          # пароль не используется, в БД через сертификат
+          #existingSecret: ${DB_SECRET_NAME}
           maxConns: 20
           maxConnLifetime: "1h"
           tls:
