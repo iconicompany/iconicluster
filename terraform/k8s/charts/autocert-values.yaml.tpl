@@ -15,11 +15,11 @@ autocert:
   restrictCertificatesToNamespace: true
 bootstrapper:
   image:
-    repository: ghcr.io/iconicompany/autocert-bootstrapper
-    tag: v1.2.0 # version change requres restart: `kubectl delete pods -l app.kubernetes.io/name=autocert -n smallstep`
+    repository: ghcr.io/iconicompany/autocertcontainers-bootstrapper
+    tag: v1.2.2 # version change requres restart: `kubectl delete pods -l app.kubernetes.io/name=autocert -n smallstep`
 renewer:
   image:
-    repository: ghcr.io/iconicompany/autocert-renewer
-    tag: v1.2.0 # version change requres restart: `kubectl delete pods -l app.kubernetes.io/name=autocert -n smallstep`
+    repository: ghcr.io/iconicompany/autocertcontainers-renewer
+    tag: v1.2.2 # version change requres restart: `kubectl delete pods -l app.kubernetes.io/name=autocert -n smallstep`
 step-certificates:
   enabled: false
