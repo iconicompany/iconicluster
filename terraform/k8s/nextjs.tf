@@ -1,13 +1,19 @@
 # ZITADEL project + OIDC app for a local Next.js (Auth.js / NextAuth) dev app.
-# org_id is omitted on both resources -> the zitadel provider uses the org of the
-# authenticated service account (the "terraform" service user, ORG_OWNER).
+locals {
+  # Default org (the terraform service user's org). Set explicitly so the v2 provider
+  # doesn't see org_id flip from the stored value to null and force-replace the
+  # project/app (which would regenerate client_id/client_secret).
+  ZITADEL_ORG_ID = "378799471351365794"
+}
 
 resource "zitadel_project" "nextjs" {
-  name = "nextjs"
+  name   = "nextjs"
+  org_id = local.ZITADEL_ORG_ID
 }
 
 resource "zitadel_application_oidc" "nextjs" {
   project_id = zitadel_project.nextjs.id
+  org_id     = local.ZITADEL_ORG_ID
   name       = "nextjs"
 
   redirect_uris             = ["http://localhost:3000/api/auth/callback/zitadel"]

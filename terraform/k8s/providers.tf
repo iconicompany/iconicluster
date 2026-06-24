@@ -32,7 +32,7 @@ terraform {
     }
     zitadel = {
       source  = "zitadel/zitadel"
-      version = "~> 1.2"
+      version = "~> 2.8"
     }
   }
 }

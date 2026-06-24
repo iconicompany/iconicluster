@@ -199,3 +199,38 @@ variable "ZITADEL_JWT_PROFILE_FILE" {
   type        = string
   default     = "~/.zitadel/terraform-key.json"
 }
+
+# SMTP for ZITADEL email (registration verification, password reset, Email OTP).
+variable "SMTP_HOST" {
+  description = "SMTP server host"
+  type        = string
+  default     = "mail.iconicompany.com"
+}
+variable "SMTP_PORT" {
+  description = "SMTP server port"
+  type        = number
+  default     = 587
+}
+variable "SMTP_TLS" {
+  description = "Use StartTLS for SMTP"
+  type        = bool
+  default     = true
+}
+variable "SMTP_SENDER_NAME" {
+  description = "SMTP sender display name"
+  type        = string
+  default     = "iconicompany"
+}
+variable "SMTP_USER" {
+  description = "SMTP auth username"
+  type        = string
+}
+variable "SMTP_FROM" {
+  description = "SMTP sender (from) address"
+  type        = string
+}
+variable "SMTP_PASSWORD" {
+  description = "SMTP auth password"
+  type        = string
+  sensitive   = true
+}
