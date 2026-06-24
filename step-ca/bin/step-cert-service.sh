@@ -50,7 +50,8 @@ fi
 
 
 if [[ $CN != *.* ]]; then
-  CN=$CN.$(hostname -d) # append domain
+  true
+  #CN=$CN.$(hostname -d) # append domain
 fi
 if [[ $SERVICE == "" ]]; then
   SERVICE=${ARG1//[0-9]/} # remove numbers
