@@ -1,11 +1,19 @@
 module "nginx-controller" {
   # depends_on = [null_resource.k3s_finalize]
-  source     = "terraform-iaac/nginx-controller/helm"
+  source = "terraform-iaac/nginx-controller/helm"
+  # Pin to the 2.x line: module 3.0.0+ requires the helm provider ~> 3.0, which
+  # is incompatible with the 2.x block syntax used by dex/temporal/autocert here.
+  version = "~> 2.3"
 }
 module "cert_manager" {
   depends_on = [module.nginx-controller]
   source     = "terraform-iaac/cert-manager/kubernetes"
-  #chart_version                          = "1.14.3"
+  # Pin to 2.x: module 3.0.0+ requires the helm provider ~> 3.0 (incompatible
+  # with the 2.x syntax used elsewhere here).
+  version = "~> 2.6"
+  # Keep the currently-deployed cert-manager app version; the 2.6.x module would
+  # otherwise default to v1.17.2 and silently upgrade it (6 minor versions).
+  chart_version                          = "v1.11.0"
   cluster_issuer_email                   = var.CLUSTER_ISSUER_EMAIL
   cluster_issuer_name                    = "letsencrypt-prod"
   cluster_issuer_private_key_secret_name = "letsencrypt-prod"
