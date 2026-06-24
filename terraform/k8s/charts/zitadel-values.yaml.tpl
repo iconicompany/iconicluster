@@ -12,6 +12,17 @@ zitadel:
     ExternalDomain: ${ZITADEL_DOMAIN}
     ExternalPort: 443
     ExternalSecure: true
+    # Behind nginx with a gRPC backend, the :authority becomes the internal upstream
+    # name ("upstream_balancer"), so ZITADEL would build the console API URL as
+    # https://upstream_balancer and the console fails with "Failed to fetch". Read the
+    # real host from X-Forwarded-Host (set by nginx). The x-zitadel-* headers stay first
+    # so the login v2 service (which sets x-zitadel-public-host) keeps working.
+    InstanceHostHeaders:
+      - "x-zitadel-instance-host"
+      - "x-forwarded-host"
+    PublicHostHeaders:
+      - "x-zitadel-public-host"
+      - "x-forwarded-host"
     TLS:
       # TLS is terminated at the nginx ingress, ZITADEL serves h2c internally
       Enabled: false
@@ -42,8 +53,15 @@ zitadel:
 # Main ZITADEL service (API, console, OIDC/SAML) — h2c backend.
 ingress:
   enabled: true
-  # "nginx" makes the chart add nginx.ingress.kubernetes.io/backend-protocol for h2c/gRPC
-  controller: nginx
+  # HTTP backend-protocol (default): nginx proxy_pass preserves Host=$best_http_host, so
+  # ZITADEL builds the console api URL from the real host. With "nginx"/GRPC, grpc_pass
+  # rewrites :authority to the internal upstream name ("upstream_balancer") and the console
+  # fails with "Failed to fetch". ZITADEL's gRPC-web/Connect API works fine over HTTP/1.1.
+  controller: generic
+  # Set explicitly (like dex): the default IngressClass is only auto-assigned on create,
+  # so a helm upgrade with an empty className drops the class and the controller stops
+  # serving the ingress (404).
+  className: nginx
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
   hosts:
@@ -64,7 +82,8 @@ login:
   replicaCount: 1
   ingress:
     enabled: true
-    controller: nginx
+    controller: generic
+    className: nginx
     hosts:
       - host: ${ZITADEL_DOMAIN}
         paths:
