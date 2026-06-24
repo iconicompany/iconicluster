@@ -13,7 +13,8 @@
 # Config via env (all optional except the arg):
 #   ZITADEL_URL         default https://zitadel.iconicompany.com
 #   ZITADEL_ADMIN_KEY   default ~/.zitadel/terraform-key.json   (must be IAM_OWNER)
-#   ZITADEL_KEY_OUT     default ./.zitadel/<service>-key.json
+#   ZITADEL_KEY_OUT     default ./.zitadel/<service>-key.json  (set "" to skip the JSON file)
+#   ZITADEL_ENV_OUT     default ./.env  (adds ZITADEL_URL + ZITADEL_SERVICE_ACCOUNT_KEY; set "" to skip)
 #   ZITADEL_RESOLVE_IP  optional, e.g. 212.22.94.191 (adds curl --resolve if DNS is flaky)
 #   ZITADEL_ORG_ROLES   default ORG_USER_MANAGER
 #   ZITADEL_IAM_ROLES   default IAM_LOGIN_CLIENT
@@ -24,7 +25,8 @@ if [ -z "$SERVICE" ]; then echo "usage: $0 <service_name>" >&2; exit 1; fi
 
 ZITADEL_URL="${ZITADEL_URL:-https://zitadel.iconicompany.com}"
 ADMIN_KEY="${ZITADEL_ADMIN_KEY:-$HOME/.zitadel/terraform-key.json}"
-KEY_OUT="${ZITADEL_KEY_OUT:-./.zitadel/${SERVICE}-key.json}"
+KEY_OUT="${ZITADEL_KEY_OUT-./.zitadel/${SERVICE}-key.json}"
+ENV_OUT="${ZITADEL_ENV_OUT-./.env}"
 RESOLVE_IP="${ZITADEL_RESOLVE_IP:-}"
 ORG_ROLES="${ZITADEL_ORG_ROLES:-ORG_USER_MANAGER}"
 IAM_ROLES="${ZITADEL_IAM_ROLES:-IAM_LOGIN_CLIENT}"
@@ -38,6 +40,12 @@ CURL=(curl -sS --max-time 30)
 
 jget() { python3 -c "import sys,json;d=json.load(sys.stdin);print(d.get('$1',''))"; }
 b64url() { openssl base64 -A | tr '+/' '-_' | tr -d '='; }
+# update_env <file> <KEY> <VALUE>: set KEY=VALUE in a .env file (replace existing line, else append)
+update_env() {
+  local f="$1" k="$2" v="$3" tmp; mkdir -p "$(dirname "$f")"; touch "$f"
+  tmp="$(mktemp)"; grep -vE "^${k}=" "$f" > "$tmp" 2>/dev/null || true
+  printf '%s=%s\n' "$k" "$v" >> "$tmp"; mv "$tmp" "$f"
+}
 
 # --- 1. mint admin token (JWT profile) -------------------------------------
 KID="$(python3 -c "import json;print(json.load(open('$ADMIN_KEY'))['keyId'])")"
@@ -66,11 +74,21 @@ IAM_JSON="$(python3 -c "import json,sys;print(json.dumps({'userId':sys.argv[1],'
 "${CURL[@]}" "${AUTH[@]}" -X POST "$ZITADEL_URL/management/v1/orgs/me/members" -d "$ORG_JSON" >/dev/null && echo "granted org roles: $ORG_ROLES"
 "${CURL[@]}" "${AUTH[@]}" -X POST "$ZITADEL_URL/admin/v1/members" -d "$IAM_JSON" >/dev/null && echo "granted instance roles: $IAM_ROLES"
 
-# --- 4. create JSON key, save to file --------------------------------------
+# --- 4. create JSON key; save to file and/or .env --------------------------
 RESP="$("${CURL[@]}" "${AUTH[@]}" -X POST "$ZITADEL_URL/management/v1/users/$USER_ID/keys" -d '{"type":"KEY_TYPE_JSON"}')"
-mkdir -p "$(dirname "$KEY_OUT")"
-printf '%s' "$RESP" | python3 -c "import sys,json,base64;d=json.load(sys.stdin);open('$KEY_OUT','wb').write(base64.b64decode(d['keyDetails']))"
-chmod 600 "$KEY_OUT"
+KEY_B64="$(printf '%s' "$RESP" | jget keyDetails)"   # base64 of the JSON key file
+[ -n "$KEY_B64" ] || { echo "key creation failed: $RESP" >&2; exit 1; }
+if [ -n "$KEY_OUT" ]; then
+  mkdir -p "$(dirname "$KEY_OUT")"
+  printf '%s' "$KEY_B64" | python3 -c "import sys,base64;sys.stdout.buffer.write(base64.b64decode(sys.stdin.read()))" > "$KEY_OUT"
+  chmod 600 "$KEY_OUT"
+  echo "key (JSON) saved : $KEY_OUT"
+fi
+if [ -n "$ENV_OUT" ]; then
+  update_env "$ENV_OUT" "ZITADEL_URL" "$ZITADEL_URL"
+  update_env "$ENV_OUT" "ZITADEL_SERVICE_ACCOUNT_KEY" "$KEY_B64"
+  echo "env updated      : $ENV_OUT (ZITADEL_URL, ZITADEL_SERVICE_ACCOUNT_KEY=base64)"
+fi
 
 # --- 5. instructions --------------------------------------------------------
 cat <<EOF
@@ -78,14 +96,17 @@ cat <<EOF
 ================================================================================
  ZITADEL service account '$SERVICE' is ready.
 ================================================================================
- Key file : $KEY_OUT   (chmod 600 — gitignore it, never commit)
+ Saved    : JSON key -> ${KEY_OUT:-<skipped>}   |   .env -> ${ENV_OUT:-<skipped>}
+ .env vars: ZITADEL_URL, ZITADEL_SERVICE_ACCOUNT_KEY (base64 of the JSON key)
  Base URL : $ZITADEL_URL
  Roles    : $ORG_ROLES (register/verify users) + $IAM_ROLES (sessions + OIDC finalize)
+ WARNING  : gitignore .env and ${KEY_OUT:-the key file} — they hold the service secret.
 
- 1) Get a service access token (JWT profile):
+ 1) Get a service access token (JWT profile). Read the key from .env (Bun/TS):
+      const k = JSON.parse(Buffer.from(process.env.ZITADEL_SERVICE_ACCOUNT_KEY, "base64").toString());
+      // RS256 JWT  header{alg:RS256,kid:k.keyId}  payload{iss:k.userId,sub:k.userId,aud:ZITADEL_URL,iat,exp}
     POST $ZITADEL_URL/oauth/v2/token
-      grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
-      assertion=<RS256 JWT: iss=sub=key.userId, aud=$ZITADEL_URL, kid=key.keyId>
+      grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer  assertion=<JWT>
       scope=openid urn:zitadel:iam:org:project:id:zitadel:aud
     -> use access_token as 'Authorization: Bearer ...' below.
 
