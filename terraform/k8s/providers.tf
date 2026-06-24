@@ -30,6 +30,10 @@ terraform {
       source  = "hashicorp/random"
       version = ">= 3.0.0"
     }
+    zitadel = {
+      source  = "zitadel/zitadel"
+      version = "~> 1.2"
+    }
   }
 }
 locals {
@@ -66,6 +70,12 @@ provider "kubernetes" {
   client_key             = file(pathexpand(var.CLIENT_KEY))
 }
 
+
+provider "zitadel" {
+  domain           = local.ZITADEL_DOMAIN
+  port             = "443"
+  jwt_profile_file = pathexpand(var.ZITADEL_JWT_PROFILE_FILE)
+}
 
 provider "postgresql" {
   host        = var.POSTGRESQL_HOST

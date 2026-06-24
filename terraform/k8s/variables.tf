@@ -193,3 +193,9 @@ variable "OUTLINE_DOMAIN" {
   description = "OUTLINE_DOMAIN, e.g docs.example.com"
   type        = string
 }
+
+variable "ZITADEL_JWT_PROFILE_FILE" {
+  description = "Path to the ZITADEL service-user JSON key (jwt profile) used by the zitadel provider"
+  type        = string
+  default     = "~/.zitadel/terraform-key.json"
+}
