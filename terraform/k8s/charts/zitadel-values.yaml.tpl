@@ -53,17 +53,20 @@ zitadel:
 # Main ZITADEL service (API, console, OIDC/SAML) — h2c backend.
 ingress:
   enabled: true
-  # HTTP backend-protocol (default): nginx proxy_pass preserves Host=$best_http_host, so
-  # ZITADEL builds the console api URL from the real host. With "nginx"/GRPC, grpc_pass
-  # rewrites :authority to the internal upstream name ("upstream_balancer") and the console
-  # fails with "Failed to fetch". ZITADEL's gRPC-web/Connect API works fine over HTTP/1.1.
-  controller: generic
+  # GRPC backend-protocol: native gRPC clients (the zitadel terraform provider, gRPC SDKs)
+  # need HTTP/2 to the backend. grpc_pass alone sets :authority to nginx's internal upstream
+  # name ("upstream_balancer"), which ZITADEL would then use as the console API URL ("Failed
+  # to fetch"); the configuration-snippet below forces the real host as the gRPC authority,
+  # so both the browser console and native gRPC work.
+  controller: nginx
   # Set explicitly (like dex): the default IngressClass is only auto-assigned on create,
   # so a helm upgrade with an empty className drops the class and the controller stops
   # serving the ingress (404).
   className: nginx
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      grpc_set_header Host ${ZITADEL_DOMAIN};
   hosts:
     - host: ${ZITADEL_DOMAIN}
       paths:
