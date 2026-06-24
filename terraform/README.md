@@ -6,10 +6,15 @@ agents: apt install nfs-common, node01 hosts entry
 
 ## DNS
 
-1. add to `/etc/systemd/system/k3s.service.env` `K3S_RESOLV_CONF=/etc/k3s-resolv.conf`
-2. create `/etc/k3s-resolv.conf` with 
-```
-nameserver 1.1.1.1
-nameserver 8.8.8.8
-```
+DNS resolution for k3s/CoreDNS is managed by terraform — no manual steps required.
+
+On every `terraform apply`:
+
+1. `null_resource.k3s_resolv_conf` writes `/etc/k3s-resolv.conf` on all nodes
+   (upstreams defined in `local.k3s_resolv_conf_nameservers`, default `1.1.1.1` / `8.8.8.8`).
+2. The `--resolv-conf=/etc/k3s-resolv.conf` flag is passed via `global_flags`, so it is
+   baked into `/etc/systemd/system/k3s.service` by the installer and survives k3s upgrades.
+
+This points CoreDNS at real upstream resolvers instead of the systemd-resolved stub
+(`127.0.0.53`), which pods cannot reach. See `k3s.tf`.
 
