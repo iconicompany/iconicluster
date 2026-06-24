@@ -3,23 +3,23 @@ frontend:
   podAnnotations:
     autocert.step.sm/name: temporal
     autocert.step.sm/sans: temporal-frontend
-    autocert.step.sm/duration: 1000h
+    autocert.step.sm/duration: 120h
     autocert.step.sm/mode: "u=rw,go="
 history:
   podAnnotations:
     autocert.step.sm/name: temporal
-    autocert.step.sm/duration: 1000h
+    autocert.step.sm/duration: 120h
     autocert.step.sm/mode: "u=rw,go="
 admintools:
   podAnnotations:
     autocert.step.sm/name: temporal
-    autocert.step.sm/duration: 1000h
+    autocert.step.sm/duration: 120h
     autocert.step.sm/owner: "1000:1000"
     autocert.step.sm/mode: "u=rw,go="
 schema:
   podAnnotations:
     autocert.step.sm/name: temporal
-    autocert.step.sm/duration: 1000h
+    autocert.step.sm/duration: 120h
     autocert.step.sm/mode: "u=rw,go="
   # certificate auth not working in schema creation due to init containers https://github.com/smallstep/autocert/issues/279
   createDatabase:
@@ -32,11 +32,11 @@ server:
   podAnnotations:
     autocert.step.sm/name: temporal
     autocert.step.sm/sans: temporal-frontend
-    autocert.step.sm/duration: 1000h
+    autocert.step.sm/duration: 120h
     autocert.step.sm/mode: "u=rw,go="
   config:
     tls:
-      refreshInterval: "86400s" # reload cert from disk
+      refreshInterval: "86400s"
       internode:
         server:
           certFile: /var/run/autocert.step.sm/site.crt
@@ -145,7 +145,7 @@ elasticsearch:
 web:
   podAnnotations:
     autocert.step.sm/name: temporal
-    autocert.step.sm/duration: 1000h
+    autocert.step.sm/duration: 120h
     autocert.step.sm/owner: "1000:1000"
     autocert.step.sm/mode: "u=rw,go="
   additionalEnv:
@@ -169,7 +169,7 @@ web:
       value: /var/run/autocert.step.sm/site.key
     - name: TEMPORAL_TLS_CA
       value: /var/run/autocert.step.sm/root.crt
-    - name: TEMPORAL_CONFIG_REFRESH_INTERVAL
+    - name: TEMPORAL_TLS_REFRESH_INTERVAL
       value: 86400s
 
   ingress:
