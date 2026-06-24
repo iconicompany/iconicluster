@@ -52,8 +52,9 @@ resource "zitadel_application_oidc" "baas" {
   grant_types               = ["OIDC_GRANT_TYPE_AUTHORIZATION_CODE", "OIDC_GRANT_TYPE_REFRESH_TOKEN"]
   app_type                  = "OIDC_APP_TYPE_WEB"
   auth_method_type          = "OIDC_AUTH_METHOD_TYPE_BASIC"
-  version                   = "OIDC_VERSION_1_0"
-  access_token_type         = "OIDC_TOKEN_TYPE_BEARER"
+  version = "OIDC_VERSION_1_0"
+  # JWT access tokens so the gateway can verify them locally (JWKS) without introspection.
+  access_token_type = "OIDC_TOKEN_TYPE_JWT"
   # dev_mode allows the non-HTTPS http://localhost redirect during development
   dev_mode = true
 }
