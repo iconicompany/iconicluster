@@ -1,50 +1,49 @@
-# Per-app service account for the "baas" app (/home/slavb18/moon/work-iq/baas).
 # Drives headless auth via the ZITADEL API: register users, email-code login
 # (Session API), and finalizing OIDC auth requests. Each app gets its own account.
-resource "zitadel_machine_user" "baas" {
+resource "zitadel_machine_user" "default" {
   org_id      = local.ZITADEL_ORG_ID
-  user_name   = "baas"
-  name        = "baas service account"
-  description = "Backend service account for the baas app (headless auth)"
+  user_name   = "default"
+  name        = "default service account"
+  description = "Backend service account for the default app (headless auth)"
 }
 
-resource "zitadel_machine_key" "baas" {
+resource "zitadel_machine_key" "default" {
   org_id   = local.ZITADEL_ORG_ID
-  user_id  = zitadel_machine_user.baas.id
+  user_id  = zitadel_machine_user.default.id
   key_type = "KEY_TYPE_JSON"
 }
 
 # IAM_LOGIN_CLIENT: required for the Session API and finalizing OIDC auth requests.
-resource "zitadel_instance_member" "baas_login_client" {
-  user_id = zitadel_machine_user.baas.id
+resource "zitadel_instance_member" "default_login_client" {
+  user_id = zitadel_machine_user.default.id
   roles   = ["IAM_LOGIN_CLIENT"]
 }
 
 # ORG_USER_MANAGER: create/verify users (registration, email verification, OTP email).
-resource "zitadel_org_member" "baas_user_manager" {
+resource "zitadel_org_member" "default_user_manager" {
   org_id  = local.ZITADEL_ORG_ID
-  user_id = zitadel_machine_user.baas.id
+  user_id = zitadel_machine_user.default.id
   roles   = ["ORG_USER_MANAGER"]
 }
 
-# JSON service-account key (jwt-profile) for the baas app. Sensitive; written to the
-# baas project's gitignored .zitadel/baas-key.json, not committed here.
-output "baas_key" {
-  value     = zitadel_machine_key.baas.key_details
+# JSON service-account key (jwt-profile) for the default app. Sensitive; written to the
+# default project's gitignored .zitadel/default-key.json, not committed here.
+output "default_key" {
+  value     = zitadel_machine_key.default.key_details
   sensitive = true
 }
 
-# OIDC client for the baas gateway (variant 4B: real ZITADEL tokens). The service
+# OIDC client for the default gateway (variant 4B: real ZITADEL tokens). The service
 # account drives login via the Session API and finalizes auth requests for THIS client.
-resource "zitadel_project" "baas" {
-  name   = "baas"
+resource "zitadel_project" "default" {
+  name   = "default"
   org_id = local.ZITADEL_ORG_ID
 }
 
-resource "zitadel_application_oidc" "baas" {
-  project_id = zitadel_project.baas.id
+resource "zitadel_application_oidc" "default" {
+  project_id = zitadel_project.default.id
   org_id     = local.ZITADEL_ORG_ID
-  name       = "baas"
+  name       = "default"
 
   redirect_uris             = ["http://localhost:5173/auth/callback"]
   post_logout_redirect_uris = ["http://localhost:5173"]
@@ -59,11 +58,11 @@ resource "zitadel_application_oidc" "baas" {
   dev_mode = true
 }
 
-output "baas_oidc_client_id" {
-  value     = zitadel_application_oidc.baas.client_id
+output "default_oidc_client_id" {
+  value     = zitadel_application_oidc.default.client_id
   sensitive = true
 }
-output "baas_oidc_client_secret" {
-  value     = zitadel_application_oidc.baas.client_secret
+output "default_oidc_client_secret" {
+  value     = zitadel_application_oidc.default.client_secret
   sensitive = true
 }
